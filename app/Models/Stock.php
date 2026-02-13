@@ -16,6 +16,8 @@ class Stock extends Model
         'product_id',
         'quantity',
         'reserved_qty',
+        'last_updated',
+        'updated_by',
     ];
 
     protected $casts = [
@@ -29,6 +31,11 @@ class Stock extends Model
     public function warehouse(): BelongsTo
     {
         return $this->belongsTo(Warehouse::class);
+    }
+
+    public function histories()
+    {
+        return $this->hasMany(StockHistory::class);
     }
 
     public function product(): BelongsTo

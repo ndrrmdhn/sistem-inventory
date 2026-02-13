@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\StockMutation;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class StockMutationPolicy
 {
@@ -13,7 +12,7 @@ class StockMutationPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user->hasRole(['super-admin', 'admin', 'viewer']);
     }
 
     /**
@@ -21,6 +20,17 @@ class StockMutationPolicy
      */
     public function view(User $user, StockMutation $stockMutation): bool
     {
+        if ($user->hasRole('super-admin')) {
+            return true;
+        }
+
+        if ($user->hasRole(['admin', 'viewer'])) {
+            $userWarehouseIds = $user->warehouses()->pluck('warehouses.id')->toArray();
+
+            return in_array($stockMutation->from_warehouse_id, $userWarehouseIds) ||
+                   in_array($stockMutation->to_warehouse_id, $userWarehouseIds);
+        }
+
         return false;
     }
 
@@ -29,7 +39,7 @@ class StockMutationPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->hasRole(['super-admin', 'admin']);
     }
 
     /**
@@ -37,6 +47,17 @@ class StockMutationPolicy
      */
     public function update(User $user, StockMutation $stockMutation): bool
     {
+        if ($user->hasRole('super-admin')) {
+            return true;
+        }
+
+        if ($user->hasRole('admin')) {
+            $userWarehouseIds = $user->warehouses()->pluck('warehouses.id')->toArray();
+
+            return in_array($stockMutation->from_warehouse_id, $userWarehouseIds) ||
+                   in_array($stockMutation->to_warehouse_id, $userWarehouseIds);
+        }
+
         return false;
     }
 
@@ -45,7 +66,7 @@ class StockMutationPolicy
      */
     public function delete(User $user, StockMutation $stockMutation): bool
     {
-        return false;
+        return $user->hasRole('super-admin');
     }
 
     /**
@@ -53,7 +74,7 @@ class StockMutationPolicy
      */
     public function restore(User $user, StockMutation $stockMutation): bool
     {
-        return false;
+        return $user->hasRole('super-admin');
     }
 
     /**
@@ -61,6 +82,38 @@ class StockMutationPolicy
      */
     public function forceDelete(User $user, StockMutation $stockMutation): bool
     {
+        return $user->hasRole('super-admin');
+    }
+
+    /**
+     * Determine whether the user can receive a mutation.
+     */
+    public function receive(User $user, StockMutation $stockMutation): bool
+    {
+        if ($user->hasRole('super-admin')) {
+            return true;
+        }
+
+        if ($user->hasRole('admin')) {
+            return $user->warehouses()->where('warehouses.id', $stockMutation->to_warehouse_id)->exists();
+        }
+
+        return false;
+    }
+
+    /**
+     * Determine whether the user can reject a mutation.
+     */
+    public function reject(User $user, StockMutation $stockMutation): bool
+    {
+        if ($user->hasRole('super-admin')) {
+            return true;
+        }
+
+        if ($user->hasRole('admin')) {
+            return $user->warehouses()->where('warehouses.id', $stockMutation->to_warehouse_id)->exists();
+        }
+
         return false;
     }
 }

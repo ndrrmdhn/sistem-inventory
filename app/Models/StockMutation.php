@@ -36,6 +36,39 @@ class StockMutation extends Model
         'received_at' => 'datetime',
     ];
 
+    protected $appends = ['status_display'];
+
+    // Status mapping from database to frontend
+    public const STATUS_MAPPING = [
+        'dikirim' => 'sent',
+        'diterima' => 'received',
+        'ditolak' => 'rejected',
+        'selesai' => 'completed',
+    ];
+
+    // Reverse mapping for saving to database
+    public const STATUS_REVERSE_MAPPING = [
+        'sent' => 'dikirim',
+        'received' => 'diterima',
+        'rejected' => 'ditolak',
+        'completed' => 'selesai',
+    ];
+
+    public function getStatusDisplayAttribute(): string
+    {
+        return self::STATUS_MAPPING[$this->status] ?? $this->status;
+    }
+
+    public function setStatusAttribute($value)
+    {
+        // If frontend sends English status, convert to Indonesian for database
+        if (array_key_exists($value, self::STATUS_REVERSE_MAPPING)) {
+            $this->attributes['status'] = self::STATUS_REVERSE_MAPPING[$value];
+        } else {
+            $this->attributes['status'] = $value;
+        }
+    }
+
     public function fromWarehouse(): BelongsTo
     {
         return $this->belongsTo(Warehouse::class, 'from_warehouse');
@@ -64,7 +97,7 @@ class StockMutation extends Model
     public function stockHistories(): HasMany
     {
         return $this->hasMany(StockHistory::class, 'reference_id')
-            ->where('reference_type', 'stock_mutation');
+            ->whereIn('reference_type', ['mutation_sent', 'mutation_received']);
     }
 
     public function scopeByFromWarehouse($query, $warehouseId)

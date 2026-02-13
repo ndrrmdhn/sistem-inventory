@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Warehouse extends Model
@@ -39,13 +38,8 @@ class Warehouse extends Model
         ];
     }
 
-    public function users()
+    public function scopeActive($query): void
     {
-        return $this->belongsToMany(User::class, 'warehouse_users')
-            ->using(WarehouseUser::class) // Wajib panggil model pivot tadi
-            ->withTimestamps()
-            ->withPivot('deleted_at');
+        $query->where('is_active', true);
     }
-
-
 }

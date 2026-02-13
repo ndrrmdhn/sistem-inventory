@@ -11,7 +11,7 @@ class ReceiveMutationRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,20 @@ class ReceiveMutationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'received_qty' => 'required|numeric|min:0',
+            'damaged_qty' => 'nullable|numeric|min:0',
+        ];
+    }
+
+    /**
+     * Get custom messages for validator errors.
+     */
+    public function messages(): array
+    {
+        return [
+            'received_qty.required' => 'Jumlah diterima harus diisi.',
+            'received_qty.min' => 'Jumlah diterima tidak boleh negatif.',
+            'damaged_qty.min' => 'Jumlah rusak tidak boleh negatif.',
         ];
     }
 }

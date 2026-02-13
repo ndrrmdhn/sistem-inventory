@@ -20,14 +20,14 @@ return new class extends Migration
             $table->decimal('quantity', 10, 2);
             $table->decimal('unit_price', 12, 2);
             $table->decimal('total_price', 12, 2)->storedAs('quantity * unit_price');
-            $table->date('received_date');
+            $table->date('sale_date');
             $table->foreignId('created_by')->constrained('users');
             $table->text('notes')->nullable();
-            $table->string('attachment', 255)->nullable();
+            $table->string('attachment')->nullable();
             $table->timestamps();
 
             // Indexes
-            $table->index(['code', 'warehouse_id', 'customer_id', 'product_id', 'received_date', 'created_by']);
+            $table->index(['code', 'warehouse_id', 'customer_id', 'product_id', 'sale_date', 'created_by']);
         });
     }
 

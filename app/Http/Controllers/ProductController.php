@@ -23,6 +23,7 @@ class ProductController extends Controller
         $this->authorize('viewAny', Product::class);
 
         $products = Product::query()
+            ->active()
             ->with(['category:id,name'])
             ->search($request->search)
             ->latest()

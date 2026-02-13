@@ -20,6 +20,7 @@ class Opname extends Model
         'physical_qty',
         'difference_qty',
         'difference_type',
+        'status',
         'notes',
         'opname_date',
         'created_by',
@@ -81,5 +82,15 @@ class Opname extends Model
     public function scopeSurpluses($query)
     {
         return $query->where('difference_type', 'lebih');
+    }
+
+    public function scopeDraft($query)
+    {
+        return $query->where('status', 'draft');
+    }
+
+    public function scopeApproved($query)
+    {
+        return $query->where('status', 'approved');
     }
 }

@@ -22,6 +22,7 @@ class OutboundTransaction extends Model
         'total_price',
         'sale_date',
         'notes',
+        'attachment',
         'created_by',
     ];
 
@@ -55,7 +56,7 @@ class OutboundTransaction extends Model
     public function stockHistories(): HasMany
     {
         return $this->hasMany(StockHistory::class, 'reference_id')
-            ->where('reference_type', 'outbound_transaction');
+            ->where('reference_type', 'outbound');
     }
 
     public function scopeByCustomer($query, $customerId)

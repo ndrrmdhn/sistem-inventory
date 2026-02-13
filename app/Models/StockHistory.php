@@ -13,25 +13,42 @@ class StockHistory extends Model
 
     protected $fillable = [
         'stock_id',
+        'warehouse_id',
+        'product_id',
+        'previous_qty',
+        'new_qty',
+        'change_qty',
         'reference_type',
         'reference_id',
-        'change_type',
-        'quantity_before',
-        'quantity_change',
-        'quantity_after',
+        'reference_code',
         'notes',
         'created_by',
     ];
 
     protected $casts = [
-        'quantity_before' => 'decimal:2',
-        'quantity_change' => 'decimal:2',
-        'quantity_after' => 'decimal:2',
+        'previous_qty' => 'decimal:2',
+        'new_qty' => 'decimal:2',
+        'change_qty' => 'decimal:2',
     ];
 
     public function stock(): BelongsTo
     {
         return $this->belongsTo(Stock::class);
+    }
+
+    public function warehouse(): BelongsTo
+    {
+        return $this->belongsTo(Warehouse::class);
+    }
+
+    public function product(): BelongsTo
+    {
+        return $this->belongsTo(Product::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     public function creator(): BelongsTo
@@ -44,9 +61,29 @@ class StockHistory extends Model
         return $query->where('stock_id', $stockId);
     }
 
+    public function scopeByWarehouse($query, $warehouseId)
+    {
+        return $query->where('warehouse_id', $warehouseId);
+    }
+
+    public function scopeByProduct($query, $productId)
+    {
+        return $query->where('product_id', $productId);
+    }
+
     public function scopeByReference($query, $type, $id)
     {
         return $query->where('reference_type', $type)->where('reference_id', $id);
+    }
+
+    public function scopeByDateRange($query, $startDate, $endDate)
+    {
+        return $query->whereBetween('created_at', [$startDate, $endDate]);
+    }
+
+    public function scopeByReferenceType($query, $type)
+    {
+        return $query->where('reference_type', $type);
     }
 
     public function scopeByChangeType($query, $changeType)

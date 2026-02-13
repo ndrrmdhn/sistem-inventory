@@ -5,13 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
     use HasFactory, SoftDeletes;
-
 
     protected $fillable = [
         'code',
@@ -41,7 +39,6 @@ class Product extends Model
         }
     }
 
-
     protected function casts(): array
     {
         return [
@@ -54,27 +51,13 @@ class Product extends Model
         ];
     }
 
-
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
     }
 
-
-
-    /**
-     * Get the full URL for the product image.
-     */
-    public function getImageUrlAttribute(): ?string
+    public function scopeActive($query): void
     {
-        return $this->image ? asset('storage/' . $this->image) : null;
-    }
-
-    /**
-     * Get the image path for storage operations.
-     */
-    public function getImagePathAttribute(): ?string
-    {
-        return $this->image;
+        $query->where('is_active', true);
     }
 }

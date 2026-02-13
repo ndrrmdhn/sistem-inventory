@@ -19,15 +19,16 @@ export function useFilters({
 
     useEffect(() => {
         // Only trigger if filters actually changed
-        const hasChanged = Object.keys(initialFilters).some(
-            key => previousFilters.current[key] !== filterForm.data[key]
+        const currentFilters = filterForm.data;
+        const hasChanged = Object.keys(currentFilters).some(
+            key => previousFilters.current[key] !== currentFilters[key]
         );
 
         if (!hasChanged) {
             return;
         }
 
-        previousFilters.current = filterForm.data;
+        previousFilters.current = { ...currentFilters };
 
         const timer = setTimeout(() => {
             // Get current URL params to preserve pagination

@@ -14,7 +14,6 @@ Route::get('auth/google/callback', [ProfileController::class, 'google_callback']
     ->middleware('guest')
     ->name('google.callback');
 
-
 Route::get('dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
@@ -44,7 +43,6 @@ Route::prefix('dashboard')->middleware(['auth', 'verified'])->group(function () 
             ->name('customers.bulk-destroy');
 
     });
-
 
     // CRUD operations - Rate limit: 30 per minute
     Route::middleware(['throttle:crud'])->group(function () {
@@ -76,9 +74,64 @@ Route::prefix('dashboard')->middleware(['auth', 'verified'])->group(function () 
             ->parameters(['customers' => 'customer'])
             ->except(['create', 'edit']);
 
+        // Stock Management
+        Route::prefix('stocks')->name('stocks.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\StockController::class, 'index'])->name('index');
+        });
+
+        // Inbound Transactions
+        Route::prefix('inbound')->name('inbound.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\InboundController::class, 'index'])->name('index');
+            Route::post('/', [\App\Http\Controllers\InboundController::class, 'store'])->name('store');
+            Route::put('/{transaction}', [\App\Http\Controllers\InboundController::class, 'update'])->name('update');
+            Route::delete('/{transaction}', [\App\Http\Controllers\InboundController::class, 'destroy'])->name('destroy');
+        });
+
+        // Outbound Transactions
+        Route::prefix('outbound')->name('outbound.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\OutboundController::class, 'index'])->name('index');
+            Route::post('/', [\App\Http\Controllers\OutboundController::class, 'store'])->name('store');
+            Route::put('/{transaction}', [\App\Http\Controllers\OutboundController::class, 'update'])->name('update');
+            Route::delete('/{transaction}', [\App\Http\Controllers\OutboundController::class, 'destroy'])->name('destroy');
+        });
+
+        // Opname
+        Route::prefix('opname')->name('opname.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\OpnameController::class, 'index'])->name('index');
+            Route::post('/', [\App\Http\Controllers\OpnameController::class, 'store'])->name('store');
+            Route::post('/{opname}/approve', [\App\Http\Controllers\OpnameController::class, 'approve'])->name('approve');
+        });
+        Route::prefix('mutations')->name('mutations.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\MutationController::class, 'index'])->name('index');
+            Route::get('/{mutation}', [\App\Http\Controllers\MutationController::class, 'show'])->name('show');
+            Route::post('/', [\App\Http\Controllers\MutationController::class, 'store'])->name('store');
+            Route::put('/{mutation}', [\App\Http\Controllers\MutationController::class, 'update'])->name('update');
+            Route::delete('/{mutation}', [\App\Http\Controllers\MutationController::class, 'destroy'])->name('destroy');
+            Route::post('/{mutation}/receive', [\App\Http\Controllers\MutationController::class, 'receive'])->name('receive');
+            Route::post('/{mutation}/reject', [\App\Http\Controllers\MutationController::class, 'reject'])->name('reject');
+        });
+
+        // Stock History
+        Route::prefix('stock-history')->name('stock-history.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\StockHistoryController::class, 'index'])->name('index');
+        });
+
+        // Stock Management
+        Route::prefix('stocks')->name('stocks.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\StockController::class, 'index'])->name('index');
+        });
+
+        // Reports
+        Route::prefix('reports')->name('reports.')->group(function () {
+            Route::get('/stock', [\App\Http\Controllers\ReportController::class, 'stock'])->name('stock');
+            Route::get('/transactions', [\App\Http\Controllers\ReportController::class, 'transactions'])->name('transactions');
+            Route::get('/alerts', [\App\Http\Controllers\ReportController::class, 'alerts'])->name('alerts');
+            Route::get('/stock/export', [\App\Http\Controllers\ReportController::class, 'exportStock'])->name('stock.export');
+            Route::get('/transactions/export', [\App\Http\Controllers\ReportController::class, 'exportTransactions'])->name('transactions.export');
+        });
+
     });
 
 });
-
 
 require __DIR__.'/settings.php';

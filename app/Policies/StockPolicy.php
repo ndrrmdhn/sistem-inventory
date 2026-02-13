@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\Stock;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class StockPolicy
 {
@@ -13,7 +12,7 @@ class StockPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user->hasRole(['super-admin', 'admin', 'viewer']);
     }
 
     /**
@@ -21,6 +20,18 @@ class StockPolicy
      */
     public function view(User $user, Stock $stock): bool
     {
+        if ($user->hasRole('super-admin')) {
+            return true;
+        }
+
+        if ($user->hasRole('admin')) {
+            return $user->warehouses()->where('warehouses.id', $stock->warehouse_id)->exists();
+        }
+
+        if ($user->hasRole('viewer')) {
+            return $user->warehouses()->where('warehouses.id', $stock->warehouse_id)->exists();
+        }
+
         return false;
     }
 
@@ -29,7 +40,7 @@ class StockPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->hasRole(['super-admin', 'admin']);
     }
 
     /**
@@ -37,6 +48,14 @@ class StockPolicy
      */
     public function update(User $user, Stock $stock): bool
     {
+        if ($user->hasRole('super-admin')) {
+            return true;
+        }
+
+        if ($user->hasRole('admin')) {
+            return $user->warehouses()->where('warehouses.id', $stock->warehouse_id)->exists();
+        }
+
         return false;
     }
 
@@ -45,7 +64,7 @@ class StockPolicy
      */
     public function delete(User $user, Stock $stock): bool
     {
-        return false;
+        return $user->hasRole('super-admin');
     }
 
     /**
@@ -53,7 +72,7 @@ class StockPolicy
      */
     public function restore(User $user, Stock $stock): bool
     {
-        return false;
+        return $user->hasRole('super-admin');
     }
 
     /**
@@ -61,6 +80,6 @@ class StockPolicy
      */
     public function forceDelete(User $user, Stock $stock): bool
     {
-        return false;
+        return $user->hasRole('super-admin');
     }
 }

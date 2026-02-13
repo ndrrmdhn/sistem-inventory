@@ -2,9 +2,9 @@ import { Link } from '@inertiajs/react';
 import {
     LayoutGrid,
     Package,
-
     Boxes,
-    Settings2
+    Settings2,
+    FileText
 } from 'lucide-react';
 
 import { NavMain } from '@/components/nav-main';
@@ -30,28 +30,47 @@ export function AppSidebar() {
     // 1. Menu Utama (Tanpa Dropdown)
     const topNavItems: NavItem[] = [
         {
-            title: 'Dashboard',
+            title: 'Beranda',
             href: dashboard.url(),
             icon: LayoutGrid,
         },
     ];
 
     // 2. Kelompok Operasional (Dropdown)
-    const inventoryNavItems: NavItem[] = [
+    const operationalNavItems: NavItem[] = [
         {
             title: 'Manajemen Stok',
             href: '#',
             icon: Boxes,
             items: [
-
+                { title: 'Barang Masuk', href: '/dashboard/inbound' },
+                { title: 'Barang Keluar', href: '/dashboard/outbound' },
+                { title: 'Opname Stok', href: '/dashboard/opname' },
+                { title: 'Mutasi Antar Gudang', href: '/dashboard/mutations' },
+                { title: 'Riwayat Stok', href: '/dashboard/stock-history' },
+                { title: 'Stok Tersedia', href: '/dashboard/stocks' },
             ],
         },
     ];
 
-    // 3. Kelompok Admin (Dropdown - Super Admin Only)
-    const adminNavItems: NavItem[] = isSuperAdmin ? [
+    // 3. Kelompok Laporan (Dropdown)
+    const reportNavItems: NavItem[] = [
         {
-            title: 'Katalog Produk',
+            title: 'Laporan & Analitik',
+            href: '#',
+            icon: FileText,
+            items: [
+                { title: 'Laporan Stok', href: '/dashboard/reports/stock' },
+                { title: 'Laporan Transaksi', href: '/dashboard/reports/transactions' },
+                { title: 'Laporan Peringatan', href: '/dashboard/reports/alerts' },
+            ],
+        },
+    ];
+
+    // 4. Kelompok Master Data (Dropdown - Super Admin Only)
+    const masterDataNavItems: NavItem[] = isSuperAdmin ? [
+        {
+            title: 'Data Produk',
             href: '#',
             icon: Package,
             items: [
@@ -62,13 +81,13 @@ export function AppSidebar() {
             ],
         },
         {
-            title: 'Konfigurasi Sistem',
+            title: 'Pengaturan Sistem',
             href: '#',
             icon: Settings2,
             items: [
                 { title: 'Daftar Gudang', href: '/dashboard/warehouses' },
                 { title: 'Data Karyawan', href: '/dashboard/employees' },
-                { title: 'Penugasan Staf', href: '/dashboard/warehouse-users' },
+                { title: 'Penugasan Staf Gudang', href: '/dashboard/warehouse-users' },
             ],
         },
     ] : [];
@@ -88,15 +107,18 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent className="gap-0">
-                {/* Bagian Dashboard */}
+                {/* Bagian Beranda */}
                 <NavMain items={topNavItems} />
 
                 {/* Bagian Operasional (Dropdown) */}
-                <NavMain title="Operasional" items={inventoryNavItems} />
+                <NavMain title="Operasional" items={operationalNavItems} />
+
+                {/* Bagian Laporan (Dropdown) */}
+                <NavMain title="Laporan" items={reportNavItems} />
 
                 {/* Bagian Master Data (Dropdown - Admin Only) */}
                 {isSuperAdmin && (
-                    <NavMain title="Administrator" items={adminNavItems} />
+                    <NavMain title="Master Data" items={masterDataNavItems} />
                 )}
             </SidebarContent>
 

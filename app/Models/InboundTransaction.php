@@ -18,22 +18,17 @@ class InboundTransaction extends Model
         'warehouse_id',
         'product_id',
         'quantity',
-        'received_qty',
-        'damaged_qty',
         'unit_price',
-        'total_price',
-        'receipt_date',
+        'received_date',
         'notes',
         'created_by',
     ];
 
     protected $casts = [
         'quantity' => 'decimal:2',
-        'received_qty' => 'decimal:2',
-        'damaged_qty' => 'decimal:2',
         'unit_price' => 'decimal:2',
         'total_price' => 'decimal:2',
-        'receipt_date' => 'datetime',
+        'received_date' => 'datetime',
     ];
 
     public function supplier(): BelongsTo
@@ -59,7 +54,7 @@ class InboundTransaction extends Model
     public function stockHistories(): HasMany
     {
         return $this->hasMany(StockHistory::class, 'reference_id')
-            ->where('reference_type', 'inbound_transaction');
+            ->where('reference_type', 'inbound');
     }
 
     public function scopeBySupplier($query, $supplierId)
