@@ -25,13 +25,6 @@ class BulkDeleteProductsAction
             // Lock for update to prevent race conditions
             $products = Product::whereIn('id', $ids)->lockForUpdate()->get();
 
-            // Delete associated images
-            foreach ($products as $product) {
-                if ($product->image) {
-                    $this->fileUploadService->delete($product->image);
-                }
-            }
-
             // Soft delete - preserves audit trail
             return Product::whereIn('id', $ids)->delete();
         });

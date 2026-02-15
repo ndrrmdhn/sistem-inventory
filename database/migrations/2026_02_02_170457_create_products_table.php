@@ -23,7 +23,6 @@ return new class extends Migration
             $table->decimal('cost', 15, 2)->default(0);
             $table->text('description')->nullable();
             $table->boolean('is_active')->default(true);
-            $table->string('image')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

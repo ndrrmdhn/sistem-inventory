@@ -4,7 +4,6 @@ namespace App\Actions\Products;
 
 use App\Models\Product;
 use App\Services\FileUploadService;
-use Illuminate\Http\UploadedFile;
 
 class UpdateProductAction
 {
@@ -19,47 +18,17 @@ class UpdateProductAction
      */
     public function execute(Product $product, array $input): Product
     {
-        $imagePath = $product->image;
+        // Gunakan collect untuk mempermudah pembersihan data opsional
+        $data = collect($input)->only([
+            'category_id', 'name', 'unit', 'min_stock',
+            'max_stock', 'price', 'cost', 'description', 'is_active'
+        ])->filter(function ($value) {
+            // Hanya update jika nilainya tidak kosong (tapi 0 tetap boleh)
+            return $value !== '' && $value !== null;
+        })->toArray();
 
-        // Handle image upload
-        if (isset($input['image'])) {
-            if ($input['image'] instanceof UploadedFile) {
-                // Delete old image if exists
-                if ($product->image) {
-                    $this->fileUploadService->delete($product->image);
-                }
-                // Upload new image
-                $imagePath = $this->fileUploadService->upload(
-                    file: $input['image'],
-                    folder: 'products',
-                    disk: 'public',
-                    allowedMimes: ['image/jpeg', 'image/png'],
-                    maxSize: 2048, // 2MB
-                    prefix: 'product'
-                );
-            } elseif ($input['image'] === null) {
-                // Remove image
-                if ($product->image) {
-                    $this->fileUploadService->delete($product->image);
-                }
-                $imagePath = null;
-            }
-        }
+        $product->update($data);
 
-        $product->update([
-            'code' => $input['code'],
-            'category_id' => $input['category_id'],
-            'name' => $input['name'],
-            'unit' => $input['unit'],
-            'min_stock' => $input['min_stock'] ?? 0,
-            'max_stock' => $input['max_stock'] ?? 0,
-            'price' => $input['price'] ?? 0,
-            'cost' => $input['cost'] ?? 0,
-            'description' => $input['description'] ?? null,
-            'is_active' => $input['is_active'] ?? true,
-            'image' => $imagePath,
-        ]);
-
-        return $product;
+        return $product->fresh();
     }
 }

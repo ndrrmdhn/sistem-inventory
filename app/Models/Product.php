@@ -22,10 +22,9 @@ class Product extends Model
         'cost',
         'description',
         'is_active',
-        'image',
     ];
 
-    protected $appends = ['image_url'];
+    protected $appends = [];
 
     public function scopeSearch($query, ?string $search): void
     {
@@ -61,14 +60,5 @@ class Product extends Model
     public function scopeActive($query): void
     {
         $query->where('is_active', true);
-    }
-
-    public function getImageUrlAttribute(): ?string
-    {
-        if (! $this->image) {
-            return null;
-        }
-
-        return asset('storage/'.$this->image);
     }
 }

@@ -29,7 +29,6 @@ interface DashboardProps {
         unit: string;
         price: number;
         is_active: boolean;
-        image_url?: string | null;
         category?: {
             name: string;
         };

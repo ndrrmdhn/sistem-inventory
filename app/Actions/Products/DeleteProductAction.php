@@ -23,11 +23,6 @@ class DeleteProductAction
             // Lock for update to prevent race conditions
             $product = Product::where('id', $product->getKey())->lockForUpdate()->firstOrFail();
 
-            // Delete associated image if exists
-            if ($product->image) {
-                $this->fileUploadService->delete($product->image);
-            }
-
             // Soft delete - preserves audit trail for stock_logs and stock_transfers
             $product->delete();
         });

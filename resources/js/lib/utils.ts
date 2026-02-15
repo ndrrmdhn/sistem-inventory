@@ -39,3 +39,14 @@ export function generateBatchNumber(): string {
     const random = Math.random().toString(36).substring(2, 6).toUpperCase();
     return `BATCH-${timestamp}-${random}`;
 }
+
+export const formatIDR = (amount: number | string | null) => {
+    if (amount === null || amount === '') return '-';
+
+    return new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+    }).format(Number(amount));
+};

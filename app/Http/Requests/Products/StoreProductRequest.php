@@ -3,7 +3,6 @@
 namespace App\Http\Requests\Products;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class StoreProductRequest extends FormRequest
 {
@@ -18,15 +17,15 @@ class StoreProductRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         $this->merge([
-            // Bersihkan nama dari potensi XSS
             'name' => strip_tags(trim($this->name)),
             'code' => strtoupper(trim($this->code)),
             'unit' => trim($this->unit),
-            // Bersihkan angka dari format ribuan (titik/koma)
-            'price' => $this->cleanNumber($this->price),
-            'cost' => $this->cleanNumber($this->cost),
-            'min_stock' => $this->cleanNumber($this->min_stock),
-            'max_stock' => $this->cleanNumber($this->max_stock),
+            // Cukup gunakan satu metode pembersihan yang konsisten
+            'price' => $this->formatNumeric($this->price),
+            'cost' => $this->formatNumeric($this->cost),
+            'min_stock' => $this->formatNumeric($this->min_stock),
+            'max_stock' => $this->formatNumeric($this->max_stock),
+            'is_active' => $this->boolean('is_active'),
         ]);
     }
 
@@ -40,31 +39,33 @@ class StoreProductRequest extends FormRequest
                 'max:255',
                 'regex:/^[a-zA-Z0-9\s\-\.\(\)]+$/',
             ],
-            'unit' => [
-                'required',
-                'string',
-                'max:50',
-            ],
+            'unit' => 'required|string|max:50',
+            // Gunakan numeric jika ada desimal, integer jika stok harus bulat
             'min_stock' => 'nullable|integer|min:0',
             'max_stock' => 'nullable|integer|min:0',
             'price' => 'nullable|numeric|min:0',
-            'cost' => [
-                'nullable',
-                'numeric',
-                'min:0',
-                'lte:price',
-            ],
+            'cost' => 'nullable|numeric|min:0|lte:price',
             'description' => 'nullable|string|max:1000',
             'is_active' => 'boolean',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ];
     }
 
-    private function cleanNumber($value)
+    /**
+     * Membersihkan input string ribuan/desimal menjadi float standar.
+     */
+    private function formatNumeric(mixed $value): mixed
     {
-        return is_string($value) ? str_replace(['.', ','], '', $value) : $value;
-    }
+        if (is_null($value) || $value === '') return null;
 
+        // Jika sudah numeric (dari frontend type="number"), kembalikan langsung
+        if (is_numeric($value)) return $value;
+
+        // Jika string format IDR (misal: 1.250.000,00), ubah ke 1250000.00
+        $clean = str_replace('.', '', $value); // Hapus titik ribuan
+        $clean = str_replace(',', '.', $clean); // Ubah koma desimal ke titik
+
+        return is_numeric($clean) ? (float) $clean : $value;
+    }
     public function messages(): array
     {
         return [
@@ -90,9 +91,6 @@ class StoreProductRequest extends FormRequest
             'description.string' => 'Deskripsi harus berupa teks.',
             'description.max' => 'Deskripsi tidak boleh lebih dari 1000 karakter.',
             'is_active.boolean' => 'Status aktif harus berupa boolean.',
-            'image.image' => 'File harus berupa gambar.',
-            'image.mimes' => 'Gambar harus berformat JPEG, PNG, JPG, GIF, atau WebP.',
-            'image.max' => 'Ukuran gambar tidak boleh lebih dari 2MB.',
         ];
     }
 }

@@ -3,7 +3,6 @@
 namespace App\Http\Requests\Products;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class UpdateProductRequest extends FormRequest
 {
@@ -16,75 +15,46 @@ class UpdateProductRequest extends FormRequest
     {
         $this->merge([
             'name' => strip_tags(trim($this->name)),
-            'code' => strtoupper(trim($this->code)),
             'unit' => trim($this->unit),
-            'price' => $this->cleanNumber($this->price),
-            'cost' => $this->cleanNumber($this->cost),
-            'min_stock' => $this->cleanNumber($this->min_stock),
-            'max_stock' => $this->cleanNumber($this->max_stock),
+            'price' => $this->formatNumber($this->price),
+            'cost' => $this->formatNumber($this->cost),
+            'min_stock' => $this->formatNumber($this->min_stock),
+            'max_stock' => $this->formatNumber($this->max_stock),
+            'is_active' => $this->boolean('is_active'),
         ]);
     }
 
-    private function cleanNumber($value)
+    /**
+     * Satu fungsi untuk semua kebutuhan angka (Desimal maupun Integer)
+     */
+    private function formatNumber($value): mixed
     {
-        return is_string($value) ? str_replace(['.', ','], '', $value) : $value;
+        if (is_null($value) || $value === '') return null;
+        if (is_numeric($value)) return $value;
+
+        // Menghapus titik ribuan, mengubah koma menjadi titik desimal
+        // Contoh: "1.250.000,00" -> "1250000.00"
+        return str_replace(['.', ','], ['', '.'], $value);
     }
 
     public function rules(): array
     {
-        $productId = $this->route('product')?->id ?? $this->route('product');
-
         return [
-            'code' => [
-                'sometimes',
-                'required',
-                'string',
-                'max:20',
-                Rule::unique('products', 'code')->ignore($productId),
-                'regex:/^[A-Z0-9\-]+$/',
-            ],
-            'category_id' => [
-                'sometimes',
-                'required',
-                'integer',
-                'exists:categories,id',
-            ],
-            'name' => [
-                'sometimes',
-                'required',
-                'string',
-                'max:255',
-                'regex:/^[a-zA-Z0-9\s\-\.\(\)]+$/',
-            ],
-            'unit' => [
-                'sometimes',
-                'required',
-                'string',
-                'max:50',
-            ],
-            'min_stock' => 'nullable|integer|min:0',
-            'max_stock' => 'nullable|integer|min:0',
-            'price' => 'nullable|numeric|min:0',
-            'cost' => [
-                'nullable',
-                'numeric',
-                'min:0',
-                'lte:price',
-            ],
+            'category_id' => 'sometimes|required|integer|exists:categories,id',
+            'name'        => 'sometimes|required|string|max:255|regex:/^[a-zA-Z0-9\s\-\.\(\)]+$/',
+            'unit'        => 'sometimes|required|string|max:50',
+            'min_stock'   => 'nullable|numeric|min:0',
+            'max_stock'   => 'nullable|numeric|min:0',
+            'price'       => 'nullable|numeric|min:0',
+            'cost'        => 'nullable|numeric|min:0|lte:price',
             'description' => 'nullable|string|max:1000',
-            'is_active' => 'boolean',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'is_active'   => 'boolean',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'code.required' => 'Kode produk wajib diisi.',
-            'code.string' => 'Kode produk harus berupa teks.',
-            'code.max' => 'Kode produk tidak boleh lebih dari 20 karakter.',
-            'code.unique' => 'Kode produk sudah digunakan.',
-            'code.regex' => 'Kode produk hanya boleh mengandung huruf besar, angka, dan tanda hubung.',
             'category_id.required' => 'Kategori produk wajib diisi.',
             'category_id.integer' => 'Kategori produk tidak valid.',
             'category_id.exists' => 'Kategori produk tidak ditemukan.',
@@ -107,8 +77,6 @@ class UpdateProductRequest extends FormRequest
             'description.string' => 'Deskripsi harus berupa teks.',
             'description.max' => 'Deskripsi tidak boleh lebih dari 1000 karakter.',
             'is_active.boolean' => 'Status aktif harus berupa boolean.',
-            'image.string' => 'Gambar harus berupa teks.',
-            'image.max' => 'Gambar tidak boleh lebih dari 255 karakter.',
         ];
     }
 }

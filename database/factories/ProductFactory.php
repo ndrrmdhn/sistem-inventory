@@ -14,7 +14,6 @@ class ProductFactory extends Factory
      *
      * @return array<string, mixed>
      */
-
     public function definition(): array
     {
         $units = ['Karton', 'Box', 'Pcs', 'Liter', 'Kg', 'Meter', 'Buah', 'Lusin', 'Pack', 'Dus', 'Sak', 'Kaleng'];
@@ -66,7 +65,7 @@ class ProductFactory extends Factory
         ];
 
         return [
-            'code' => 'PRD-' . fake()->unique()->numberBetween(1000, 9999),
+            'code' => 'PRD-'.fake()->unique()->numberBetween(1000, 9999),
             'category_id' => \App\Models\Category::inRandomOrder()->first()?->id ?? \App\Models\Category::factory(),
             'name' => fake()->randomElement($products),
             'unit' => fake()->randomElement($units),
@@ -76,8 +75,6 @@ class ProductFactory extends Factory
             'cost' => fake()->randomFloat(2, 500, 30000),
             'description' => fake()->optional(0.7)->sentence(),
             'is_active' => fake()->boolean(90), // 90% chance of being active
-            'image' => null,
         ];
     }
 }
-

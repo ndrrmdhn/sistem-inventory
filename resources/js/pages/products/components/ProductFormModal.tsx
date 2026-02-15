@@ -42,7 +42,6 @@ export function ProductFormModal({ open, product, categories, onClose }: Product
         cost: product?.cost?.toString() || '',
         description: product?.description || '',
         is_active: product?.is_active ?? true,
-        image: null as File | null,
     });
 
     useEffect(() => {
@@ -187,7 +186,7 @@ export function ProductFormModal({ open, product, categories, onClose }: Product
                                     id="product-min-stock"
                                     type="number"
                                     value={form.data.min_stock}
-                                    onChange={(e) => form.setData('min_stock', e.target.value)}
+                                    onChange={(e) => form.setData('min_stock', e.target.value.replace(/[^\d]/g, ''))}
                                     placeholder="0"
                                     min="0"
                                 />
@@ -200,7 +199,7 @@ export function ProductFormModal({ open, product, categories, onClose }: Product
                                     id="product-max-stock"
                                     type="number"
                                     value={form.data.max_stock}
-                                    onChange={(e) => form.setData('max_stock', e.target.value)}
+                                    onChange={(e) => form.setData('max_stock', e.target.value.replace(/[^\d]/g, ''))}
                                     placeholder="0"
                                     min="0"
                                 />
@@ -221,6 +220,7 @@ export function ProductFormModal({ open, product, categories, onClose }: Product
                                         type="number"
                                         value={form.data.cost}
                                         onChange={(e) => form.setData('cost', e.target.value)}
+                                        step="0.01"
                                         placeholder="0"
                                         min="0"
                                         className="pl-8"
@@ -240,6 +240,7 @@ export function ProductFormModal({ open, product, categories, onClose }: Product
                                         type="number"
                                         value={form.data.price}
                                         onChange={(e) => form.setData('price', e.target.value)}
+                                        step="0.01"
                                         placeholder="0"
                                         min="0"
                                         className="pl-8"
@@ -262,19 +263,6 @@ export function ProductFormModal({ open, product, categories, onClose }: Product
                                 maxLength={1000}
                             />
                             <InputError message={form.errors.description} />
-                        </div>
-
-                        {/* Row 6: Image */}
-                        <div className="space-y-2">
-                            <Label htmlFor="product-image">Gambar Produk</Label>
-                            <Input
-                                id="product-image"
-                                type="file"
-                                accept="image/*"
-                                onChange={(e) => form.setData('image', e.target.files?.[0] || null)}
-                                className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                            />
-                            <InputError message={form.errors.image} />
                         </div>
 
                         {/* Info for new products */}

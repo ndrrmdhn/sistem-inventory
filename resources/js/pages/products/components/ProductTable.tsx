@@ -1,5 +1,4 @@
 import { Edit, Package, Trash2 } from 'lucide-react';
-import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -11,6 +10,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { formatIDR } from '@/lib/utils';
 import type { Product } from '@/types/models/products';
 
 interface ProductTableProps {
@@ -22,39 +22,6 @@ interface ProductTableProps {
     onDelete: (product: Product) => void;
     allSelected: boolean;
     someSelected: boolean;
-}
-
-function ProductImageCell({ product }: { product: Product }) {
-    const [imageError, setImageError] = useState(false);
-    const [imageLoaded, setImageLoaded] = useState(false);
-
-    if (!product.image_url || imageError) {
-        return (
-            <div className="h-10 w-10 rounded-lg bg-muted flex items-center justify-center">
-                <Package className="h-5 w-5 text-muted-foreground" />
-            </div>
-        );
-    }
-
-    return (
-        <div className="h-10 w-10 rounded-lg border overflow-hidden relative">
-            {!imageLoaded && (
-                <div className="absolute inset-0 bg-muted animate-pulse flex items-center justify-center">
-                    <div className="h-4 w-4 bg-muted-foreground/20 rounded"></div>
-                </div>
-            )}
-            <img
-                src={product.image_url}
-                alt={product.name}
-                className={`h-full w-full object-cover transition-opacity duration-200 ${
-                    imageLoaded ? 'opacity-100' : 'opacity-0'
-                }`}
-                onLoad={() => setImageLoaded(true)}
-                onError={() => setImageError(true)}
-                loading="lazy"
-            />
-        </div>
-    );
 }
 
 export function ProductTable({
@@ -96,7 +63,6 @@ export function ProductTable({
                                 className={someSelected ? 'data-[state=checked]:bg-muted-foreground' : ''}
                             />
                         </TableHead>
-                        <TableHead className="font-semibold">Gambar</TableHead>
                         <TableHead className="font-semibold">Kode</TableHead>
                         <TableHead className="font-semibold">Nama Produk</TableHead>
                         <TableHead className="font-semibold">Kategori</TableHead>
@@ -117,9 +83,6 @@ export function ProductTable({
                                     />
                                 </TableCell>
                                 <TableCell>
-                                    <ProductImageCell product={product} />
-                                </TableCell>
-                                <TableCell>
                                     <Badge variant="secondary" className="font-mono text-xs">
                                         {product.code}
                                     </Badge>
@@ -135,7 +98,7 @@ export function ProductTable({
                                     </div>
                                 </TableCell>
                                 <TableCell className="text-muted-foreground">
-                                    {product.price ? `Rp ${product.price.toLocaleString('id-ID')}` : '-'}
+                                    {formatIDR(product.price)}
                                 </TableCell>
                                 <TableCell>
                                     <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${

@@ -4,7 +4,6 @@ namespace App\Actions\Products;
 
 use App\Models\Product;
 use App\Services\FileUploadService;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 
 class CreateProductAction
@@ -21,20 +20,6 @@ class CreateProductAction
     public function execute(array $input): Product
     {
         return DB::transaction(function () use ($input) {
-            $imagePath = null;
-
-            // Handle image upload
-            if (isset($input['image']) && $input['image'] instanceof UploadedFile) {
-                $imagePath = $this->fileUploadService->upload(
-                    file: $input['image'],
-                    folder: 'products',
-                    disk: 'public',
-                    allowedMimes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
-                    maxSize: 2048, // 2MB
-                    prefix: 'product'
-                );
-            }
-
             // Generate unique product code
             $code = $this->generateProductCode();
 
@@ -50,7 +35,6 @@ class CreateProductAction
                 'cost' => $input['cost'] ?? 0,
                 'description' => $input['description'] ?? null,
                 'is_active' => $input['is_active'] ?? true,
-                'image' => $imagePath,
             ]);
 
             return $product;
