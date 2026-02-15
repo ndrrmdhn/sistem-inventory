@@ -21,7 +21,6 @@ class UpdateCustomerRequest extends FormRequest
             // Bersihkan input dari potensi XSS
             'name' => strip_tags(trim($this->name)),
             'contact_person' => strip_tags(trim($this->contact_person)),
-            'code' => strtoupper(trim($this->code)),
             'phone' => trim($this->phone),
             'email' => strtolower(trim($this->email)),
             'address' => strip_tags(trim($this->address)),
@@ -33,14 +32,6 @@ class UpdateCustomerRequest extends FormRequest
         $customerId = $this->route('customer')?->id ?? $this->route('customer');
 
         return [
-            'code' => [
-                'sometimes',
-                'required',
-                'string',
-                'max:20',
-                Rule::unique('customers', 'code')->ignore($customerId),
-                'regex:/^[A-Z0-9\-]+$/',
-            ],
             'name' => [
                 'sometimes',
                 'required',

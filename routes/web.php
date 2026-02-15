@@ -60,7 +60,10 @@ Route::prefix('dashboard')->middleware(['auth', 'verified'])->group(function () 
 
         Route::resource('warehouse-users', \App\Http\Controllers\WarehouseUserController::class)
             ->parameters(['warehouse-users' => 'warehouseUser'])
-            ->except(['create', 'edit']);
+            ->except(['create', 'edit', 'update']);
+
+        Route::post('warehouse-users/swap', [\App\Http\Controllers\WarehouseUserController::class, 'swap'])
+            ->name('warehouse-users.swap');
 
         Route::resource('products', \App\Http\Controllers\ProductController::class)
             ->parameters(['products' => 'product'])

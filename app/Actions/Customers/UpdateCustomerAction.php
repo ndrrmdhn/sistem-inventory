@@ -14,7 +14,6 @@ class UpdateCustomerAction
     public function execute(Customer $customer, array $input): Customer
     {
         $customer->update([
-            'code' => $input['code'],
             'name' => $input['name'],
             'contact_person' => $input['contact_person'],
             'phone' => $input['phone'],

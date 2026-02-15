@@ -16,7 +16,6 @@ interface WarehouseUserTableProps {
     selectedIds: number[];
     onSelectAll: (checked: boolean) => void;
     onSelectOne: (id: number, checked: boolean) => void;
-    onEdit: (warehouseUser: WarehouseUser) => void;
     onDelete: (warehouseUser: WarehouseUser) => void;
     allSelected: boolean;
     someSelected: boolean;
@@ -27,7 +26,6 @@ export function WarehouseUserTable({
     selectedIds,
     onSelectAll,
     onSelectOne,
-    onEdit,
     onDelete,
     allSelected,
     someSelected,
@@ -108,15 +106,6 @@ export function WarehouseUserTable({
                                 </TableCell>
                                 <TableCell className="text-right">
                                     <div className="flex items-center justify-end gap-2">
-                                        <Button
-                                            variant="ghost"
-                                            size="sm"
-                                            className="h-8 gap-1.5"
-                                            onClick={() => onEdit(warehouseUser)}
-                                        >
-                                            <Edit className="h-3.5 w-3.5" />
-                                            <span className="sr-only sm:not-sr-only">Edit</span>
-                                        </Button>
                                         <Button
                                             variant="ghost"
                                             size="sm"

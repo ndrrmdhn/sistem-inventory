@@ -88,21 +88,19 @@ export function SupplierFormModal({ open, supplier, onClose }: SupplierFormModal
                     <div className="space-y-6 py-4">
                         {/* Row 1: Code & Name */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="supplier-code">
-                                    Kode Supplier <span className="text-destructive">*</span>
-                                </Label>
-                                <Input
-                                    id="supplier-code"
-                                    value={form.data.code}
-                                    onChange={(e) => form.setData('code', e.target.value.toUpperCase())}
-                                    placeholder="Contoh: SUP-001"
-                                    required
-                                    maxLength={20}
-                                    className="font-mono"
-                                />
-                                <InputError message={form.errors.code} />
-                            </div>
+                            {isEditing && (
+                                <div className="space-y-2">
+                                    <Label htmlFor="supplier-code">
+                                        Kode Supplier
+                                    </Label>
+                                    <Input
+                                        id="supplier-code"
+                                        value={form.data.code}
+                                        disabled
+                                        className="font-mono bg-muted"
+                                    />
+                                </div>
+                            )}
 
                             <div className="space-y-2">
                                 <Label htmlFor="supplier-name">

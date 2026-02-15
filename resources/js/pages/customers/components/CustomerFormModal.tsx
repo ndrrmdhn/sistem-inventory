@@ -86,20 +86,19 @@ export function CustomerFormModal({ open, customer, onClose }: CustomerFormModal
                     <div className="space-y-6 py-4">
                         {/* Row 1: Code & Name */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="customer-code">
-                                    Kode Customer <span className="text-destructive">*</span>
-                                </Label>
-                                <Input
-                                    id="customer-code"
-                                    value={form.data.code}
-                                    onChange={(e) => form.setData('code', e.target.value.toUpperCase())}
-                                    placeholder="Contoh: CST-0001"
-                                    required
-                                    maxLength={20}
-                                />
-                                <InputError message={form.errors.code} />
-                            </div>
+                            {isEditing && (
+                                <div className="space-y-2">
+                                    <Label htmlFor="customer-code">
+                                        Kode Customer
+                                    </Label>
+                                    <Input
+                                        id="customer-code"
+                                        value={form.data.code}
+                                        disabled
+                                        className="font-mono bg-muted"
+                                    />
+                                </div>
+                            )}
 
                             <div className="space-y-2">
                                 <Label htmlFor="customer-name">

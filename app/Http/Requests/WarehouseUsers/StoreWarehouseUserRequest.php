@@ -32,6 +32,15 @@ class StoreWarehouseUserRequest extends FormRequest
                 Rule::unique('warehouse_users')
                     ->where('warehouse_id', $this->warehouse_id)
                     ->whereNull('deleted_at'),
+                function ($attribute, $value, $fail) {
+                    $existing = \App\Models\WarehouseUser::where('user_id', $value)
+                        ->where('warehouse_id', '!=', $this->warehouse_id)
+                        ->whereNull('deleted_at')
+                        ->exists();
+                    if ($existing) {
+                        $fail('Pengguna sudah ditugaskan ke gudang lain. Satu pengguna hanya bisa ditugaskan ke satu gudang.');
+                    }
+                },
             ],
             'warehouse_id' => [
                 'required',

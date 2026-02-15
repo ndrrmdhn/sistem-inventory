@@ -33,8 +33,8 @@ export default function Index({
     });
 
     const { modals, openModal, closeModal } = useGenericModals<WarehouseUser>({
-        simple: ['create', 'bulkDelete'],
-        withData: ['edit', 'delete']
+        simple: ['create', 'bulkDelete', 'swap'],
+        withData: ['delete']
     });
     const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
@@ -55,6 +55,22 @@ export default function Index({
             onSuccess: () => {
                 setSelectedIds([]);
                 closeModal('bulkDelete');
+            },
+        });
+    };
+
+    const handleSwap = () => {
+        if (selectedIds.length !== 2) return;
+
+        router.post('/dashboard/warehouse-users/swap', {
+            data: {
+                warehouse_user1_id: selectedIds[0],
+                warehouse_user2_id: selectedIds[1],
+            },
+            preserveScroll: true,
+            onSuccess: () => {
+                setSelectedIds([]);
+                closeModal('swap');
             },
         });
     };
@@ -85,6 +101,7 @@ export default function Index({
                     onSearchChange={setSearchValue}
                     onAddClick={() => openModal('create')}
                     onBulkDeleteClick={() => openModal('bulkDelete')}
+                    onSwapClick={() => openModal('swap')}
                     onClearFilters={clearFilters}
                     selectedCount={selectedIds.length}
                     isSearching={isSearching}
@@ -96,7 +113,6 @@ export default function Index({
                     selectedIds={selectedIds}
                     onSelectAll={toggleSelectAll}
                     onSelectOne={toggleSelectOne}
-                    onEdit={(warehouseUser) => openModal('edit', warehouseUser)}
                     onDelete={(warehouseUser) => openModal('delete', warehouseUser)}
                     allSelected={allSelected}
                     someSelected={someSelected}
@@ -126,6 +142,7 @@ export default function Index({
                     onCloseModal={closeModal}
                     onConfirmDelete={handleDelete}
                     onConfirmBulkDelete={handleBulkDelete}
+                    onConfirmSwap={handleSwap}
                     selectedCount={selectedIds.length}
                 />
             </div>

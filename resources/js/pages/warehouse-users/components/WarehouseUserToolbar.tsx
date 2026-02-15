@@ -1,4 +1,4 @@
-import { Plus, Search, Trash2, X } from 'lucide-react';
+import { Plus, Search, Trash2, X, ArrowLeftRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
@@ -7,6 +7,7 @@ interface WarehouseUserToolbarProps {
     onSearchChange: (value: string) => void;
     onAddClick: () => void;
     onBulkDeleteClick: () => void;
+    onSwapClick: () => void;
     onClearFilters: () => void;
     selectedCount: number;
     isSearching: boolean;
@@ -18,6 +19,7 @@ export function WarehouseUserToolbar({
     onSearchChange,
     onAddClick,
     onBulkDeleteClick,
+    onSwapClick,
     onClearFilters,
     selectedCount,
     isSearching,
@@ -41,13 +43,24 @@ export function WarehouseUserToolbar({
                 </div>
                 <div className="flex gap-2">
                     {selectedCount > 0 && (
-                        <Button
-                            variant="destructive"
-                            onClick={onBulkDeleteClick}
-                        >
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Hapus
-                        </Button>
+                        <>
+                            {selectedCount === 2 && (
+                                <Button
+                                    variant="outline"
+                                    onClick={onSwapClick}
+                                >
+                                    <ArrowLeftRight className="mr-2 h-4 w-4" />
+                                    Tukar
+                                </Button>
+                            )}
+                            <Button
+                                variant="destructive"
+                                onClick={onBulkDeleteClick}
+                            >
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                Hapus
+                            </Button>
+                        </>
                     )}
                     <Button onClick={onAddClick}>
                         <Plus className="mr-2 h-4 w-4" />

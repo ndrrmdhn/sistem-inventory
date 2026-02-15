@@ -14,7 +14,6 @@ class UpdateSupplierAction
     public function execute(Supplier $supplier, array $input): Supplier
     {
         $supplier->update([
-            'code' => $input['code'],
             'name' => $input['name'],
             'contact_person' => $input['contact_person'],
             'phone' => $input['phone'],

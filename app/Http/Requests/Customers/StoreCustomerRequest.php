@@ -21,7 +21,6 @@ class StoreCustomerRequest extends FormRequest
             // Bersihkan input dari potensi XSS
             'name' => strip_tags(trim($this->name)),
             'contact_person' => strip_tags(trim($this->contact_person)),
-            'code' => strtoupper(trim($this->code)),
             'phone' => trim($this->phone),
             'email' => strtolower(trim($this->email)),
             'address' => strip_tags(trim($this->address)),
@@ -31,13 +30,6 @@ class StoreCustomerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'code' => [
-                'required',
-                'string',
-                'max:20',
-                Rule::unique('customers', 'code'),
-                'regex:/^[A-Z0-9\-]+$/',
-            ],
             'name' => [
                 'required',
                 'string',

@@ -51,6 +51,7 @@ interface WarehouseUserModalsProps {
     onCloseModal: (type: string) => void;
     onConfirmDelete: () => void;
     onConfirmBulkDelete: () => void;
+    onConfirmSwap: () => void;
     selectedCount: number;
 }
 
@@ -61,22 +62,17 @@ export function WarehouseUserModals({
     onCloseModal,
     onConfirmDelete,
     onConfirmBulkDelete,
+    onConfirmSwap,
     selectedCount,
 }: WarehouseUserModalsProps) {
     return (
         <>
             <WarehouseUserFormModal
-                open={(modals.create as boolean) || (modals.edit as ModalWithData<WarehouseUser>).isOpen}
-                warehouseUser={(modals.edit as ModalWithData<WarehouseUser>).data}
+                open={modals.create as boolean}
+                warehouseUser={null}
                 warehouses={warehouses}
                 users={users}
-                onClose={() => {
-                    if (modals.create) {
-                        onCloseModal('create');
-                    } else {
-                        onCloseModal('edit');
-                    }
-                }}
+                onClose={() => onCloseModal('create')}
             />
 
             <DeleteConfirmDialog
@@ -85,6 +81,14 @@ export function WarehouseUserModals({
                 description={`Apakah Anda yakin ingin menghapus ${selectedCount} penugasan pengguna gudang? Tindakan ini tidak dapat dibatalkan.`}
                 onConfirm={onConfirmBulkDelete}
                 onClose={() => onCloseModal('bulkDelete')}
+            />
+
+            <DeleteConfirmDialog
+                open={modals.swap as boolean}
+                title="Tukar Penugasan Gudang"
+                description="Apakah Anda yakin ingin menukar gudang antara kedua pengguna yang dipilih? Tindakan ini akan menukar assignment gudang mereka."
+                onConfirm={onConfirmSwap}
+                onClose={() => onCloseModal('swap')}
             />
 
             <DeleteConfirmDialog

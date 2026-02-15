@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use App\Actions\WarehouseUsers\BulkDeleteWarehouseUsersAction;
 use App\Actions\WarehouseUsers\CreateWarehouseUserAction;
 use App\Actions\WarehouseUsers\DeleteWarehouseUserAction;
-use App\Actions\WarehouseUsers\UpdateWarehouseUserAction;
+use App\Actions\WarehouseUsers\SwapWarehouseUsersAction;
 use App\Http\Requests\WarehouseUsers\StoreWarehouseUserRequest;
-use App\Http\Requests\WarehouseUsers\UpdateWarehouseUserRequest;
+use App\Http\Requests\WarehouseUsers\SwapWarehouseUsersRequest;
 use App\Models\User;
 use App\Models\Warehouse;
 use App\Models\WarehouseUser;
@@ -74,18 +74,6 @@ class WarehouseUserController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateWarehouseUserRequest $request, WarehouseUser $warehouseUser, UpdateWarehouseUserAction $action)
-    {
-        $this->authorize('update', $warehouseUser);
-
-        $action->execute($warehouseUser, $request->validated());
-
-        return redirect()->route('warehouse-users.index')->with('success', 'Penempatan berhasil.');
-    }
-
-    /**
      * Remove the specified resource from storage.
      */
     public function destroy(WarehouseUser $warehouseUser, DeleteWarehouseUserAction $action)
@@ -112,5 +100,17 @@ class WarehouseUserController extends Controller
         $count = $action->execute($request->ids);
 
         return redirect()->route('warehouse-users.index')->with('success', "{$count} penempatan berhasil dihapus.");
+    }
+
+    /**
+     * Swap warehouse assignments between two users.
+     */
+    public function swap(SwapWarehouseUsersRequest $request, SwapWarehouseUsersAction $action)
+    {
+        $this->authorize('update', WarehouseUser::class);
+
+        $action->execute($request->input('warehouse_user1_id'), $request->input('warehouse_user2_id'));
+
+        return redirect()->route('warehouse-users.index')->with('success', 'Penempatan gudang berhasil ditukar.');
     }
 }

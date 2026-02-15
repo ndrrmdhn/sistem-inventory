@@ -38,8 +38,18 @@ class Warehouse extends Model
         ];
     }
 
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'warehouse_users')
+            ->using(WarehouseUser::class)
+            ->withTimestamps()
+            ->withPivot('deleted_at');
+    }
+
     public function scopeActive($query): void
     {
         $query->where('is_active', true);
     }
+
+
 }
