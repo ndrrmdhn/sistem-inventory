@@ -9,7 +9,7 @@ class WarehousePolicy
 {
     /**
      * Determine whether the user can view any models.
-     * Super-admin, admin, and viewer can view warehouses.
+     * Super-admin and viewer can view all warehouses, admin can view their assigned warehouses.
      */
     public function viewAny(User $user): bool
     {
@@ -18,11 +18,19 @@ class WarehousePolicy
 
     /**
      * Determine whether the user can view the model.
-     * Super-admin, admin, and viewer can view warehouses.
+     * Super-admin and viewer can view all warehouses, admin can view their assigned warehouses.
      */
     public function view(User $user, Warehouse $warehouse): bool
     {
-        return $user->hasAnyRole(['super-admin', 'admin', 'viewer']);
+        if ($user->hasAnyRole(['super-admin', 'viewer'])) {
+            return true;
+        }
+
+        if ($user->hasRole('admin')) {
+            return $user->warehouses()->where('warehouse_id', $warehouse->id)->exists();
+        }
+
+        return false;
     }
 
     /**

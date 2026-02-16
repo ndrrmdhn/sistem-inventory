@@ -88,19 +88,19 @@ class ReportService
         if ($type === 'all' || $type === 'inbound') {
             $inbound = InboundTransaction::with(['product', 'warehouse', 'supplier'])
                 ->when($warehouseId, fn ($q) => $q->where('warehouse_id', $warehouseId))
-                ->whereBetween('receipt_date', [$startDate, $endDate])
+                ->whereBetween('received_date', [$startDate, $endDate])
                 ->get()
                 ->map(function ($transaction) {
                     return [
                         'type' => 'inbound',
                         'code' => $transaction->code,
-                        'date' => $transaction->receipt_date,
+                        'date' => $transaction->received_date,
                         'warehouse' => $transaction->warehouse->name,
                         'product' => $transaction->product->name,
                         'supplier' => $transaction->supplier->name,
-                        'quantity' => $transaction->received_qty,
+                        'quantity' => $transaction->quantity,
                         'unit_price' => $transaction->unit_price,
-                        'total_price' => $transaction->total_price,
+                        'total_price' => $transaction->quantity * $transaction->unit_price,
                     ];
                 });
             $data = array_merge($data, $inbound->toArray());

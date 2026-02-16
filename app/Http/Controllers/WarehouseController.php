@@ -23,6 +23,9 @@ class WarehouseController extends Controller
 
         $warehouses = Warehouse::query()
             ->search($request->search)
+            ->when($request->user()->hasRole('admin'), function ($query) use ($request) {
+                $query->whereIn('id', $request->user()->warehouses->pluck('id'));
+            })
             ->latest()
             ->paginate(10)
             ->withQueryString();

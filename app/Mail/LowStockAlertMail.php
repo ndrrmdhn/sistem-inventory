@@ -3,12 +3,13 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class ExpiredStockMail extends Mailable
+class LowStockAlertMail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -16,10 +17,8 @@ class ExpiredStockMail extends Mailable
      * Create a new message instance.
      */
     public function __construct(
-        public string $userName,
-        public int $days,
-        public array $batches,
-        public string $alertType
+        public $stocks,
+        public string $scope
     ) {}
 
     /**
@@ -27,8 +26,12 @@ class ExpiredStockMail extends Mailable
      */
     public function envelope(): Envelope
     {
+        $subject = $this->scope === 'warehouse'
+            ? 'Peringatan Stok Rendah - ' . $this->stocks->first()->warehouse->name
+            : 'Peringatan Stok Rendah - Semua Gudang';
+
         return new Envelope(
-            subject: "Peringatan Stock Expired ({$this->days} Hari)",
+            subject: $subject,
         );
     }
 
@@ -38,7 +41,11 @@ class ExpiredStockMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.expired-stock',
+            view: 'emails.low-stock-alert',
+            with: [
+                'stocks' => $this->stocks,
+                'scope' => $this->scope,
+            ],
         );
     }
 

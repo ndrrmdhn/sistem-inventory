@@ -8,14 +8,14 @@ Schedule::command('stock:check-expired-batches')
     ->runInBackground()
     ->onOneServer();
 
-Schedule::command('report:send-stock weekly')
-    ->weeklyOn(1, '08:00')
+Schedule::command('send:stock-report mingguan --role=super-admin --channel=email')
+    ->weeklyOn(1, '08:00') // Every Monday at 08:00
     ->withoutOverlapping()
     ->runInBackground()
     ->onOneServer();
 
-Schedule::command('report:send-stock monthly')
-    ->monthlyOn(1, '08:00')
+Schedule::command('check:low-stock --channel=email')
+    ->dailyAt('09:00') // Every day at 09:00
     ->withoutOverlapping()
     ->runInBackground()
     ->onOneServer();
