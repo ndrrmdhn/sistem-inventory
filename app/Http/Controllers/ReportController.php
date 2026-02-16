@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\ReportService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 use Maatwebsite\Excel\Facades\Excel;
@@ -64,7 +65,7 @@ class ReportController extends Controller
     {
         $this->authorize('view any reports');
 
-        $user = auth()->user();
+        $user = Auth::user();
         $warehouseIds = $user->warehouses->pluck('id')->toArray();
 
         $alerts = $this->reportService->getStockAlerts($warehouseIds);

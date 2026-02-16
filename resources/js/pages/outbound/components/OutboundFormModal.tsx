@@ -107,6 +107,13 @@ export function OutboundFormModal({
         }
     }, [data.warehouse_id, data.product_id, availableProducts]);
 
+    // Live preview for total (quantity * unit_price) — keeps unit_price as user input
+    const previewTotal = (() => {
+        const qty = Number(String(data.quantity)) || 0;
+        const price = Number(String(data.unit_price)) || 0;
+        return qty * price;
+    })();
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         post('/dashboard/outbound', {
@@ -333,6 +340,14 @@ export function OutboundFormModal({
                                     placeholder="0.00"
                                 />
                                 {errors.unit_price && <p className="text-sm text-destructive">{errors.unit_price}</p>}
+
+                                {/* Live total preview */}
+                                <div className="flex items-center justify-between mt-2">
+                                    <p className="text-sm text-muted-foreground">Total (preview)</p>
+                                    <p className="text-sm font-medium">
+                                        {previewTotal > 0 ? `Rp ${previewTotal.toLocaleString('id-ID')}` : '-'}
+                                    </p>
+                                </div>
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="sale_date">Tanggal Penjualan</Label>

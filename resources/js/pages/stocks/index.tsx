@@ -1,7 +1,7 @@
 import { Head } from '@inertiajs/react';
 import { useState } from 'react';
 import { Pagination } from '@/components/pagination';
-import { useGenericModals } from '@/hooks/useGenericModals';
+import { useGenericModals, type ModalWithData } from '@/hooks/useGenericModals';
 import { useSearch } from '@/hooks/useSearch';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
@@ -82,8 +82,8 @@ export default function Index({
                 )}
 
                 <StocksModals
-                    showModal={modals.show}
-                    selectedStock={modals.selectedData}
+                    showModal={(modals.show as ModalWithData<Stock>).isOpen}
+                    selectedStock={(modals.show as ModalWithData<Stock>).data}
                     onCloseShowModal={() => closeModal('show')}
                 />
             </div>

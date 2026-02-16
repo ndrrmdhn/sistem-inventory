@@ -19,7 +19,6 @@ class OutboundTransaction extends Model
         'product_id',
         'quantity',
         'unit_price',
-        'total_price',
         'sale_date',
         'notes',
         'attachment',

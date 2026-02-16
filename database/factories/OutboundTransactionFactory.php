@@ -30,7 +30,6 @@ class OutboundTransactionFactory extends Factory
             'product_id' => Product::factory(),
             'quantity' => $quantity,
             'unit_price' => $unitPrice,
-            'total_price' => $quantity * $unitPrice,
             'sale_date' => $this->faker->dateTimeBetween('-30 days', 'now'),
             'notes' => $this->faker->optional(0.5)->sentence(),
             'created_by' => User::factory(),

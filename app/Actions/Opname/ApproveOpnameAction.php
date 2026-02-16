@@ -21,7 +21,7 @@ class ApproveOpnameAction
             $opname = Opname::findOrFail($opnameId);
 
             // Validasi
-            if ($opname->status !== 'pending') {
+            if ($opname->status !== 'draft') {
                 throw new Exception('Opname hanya bisa diapprove jika status pending.');
             }
 

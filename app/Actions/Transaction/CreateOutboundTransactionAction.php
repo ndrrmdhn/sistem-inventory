@@ -98,7 +98,6 @@ class CreateOutboundTransactionAction
                     'product_id' => $productId,
                     'quantity' => $quantity,
                     'unit_price' => $unitPrice,
-                    'total_price' => $totalPrice,
                     'sale_date' => $saleDate,
                     'notes' => $notes,
                     'attachment' => $attachmentPath,
