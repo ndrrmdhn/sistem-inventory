@@ -10,6 +10,7 @@ use App\Models\Stock;
 use App\Models\StockMutation;
 use App\Models\Warehouse;
 use Maatwebsite\Excel\Facades\Excel;
+use Spatie\LaravelPdf\Facades\Pdf;
 
 class ReportService
 {
@@ -262,13 +263,23 @@ class ReportService
     public function exportStockReport(?int $warehouseId, string $startDate, string $endDate, string $format)
     {
         if ($format === 'excel') {
-            $filename = 'stock_report_' . str_replace('-', '_', $startDate) . '_to_' . str_replace('-', '_', $endDate) . '.xlsx';
+            $filename = 'stock_report_'.str_replace('-', '_', $startDate).'_to_'.str_replace('-', '_', $endDate).'.xlsx';
 
             return Excel::download(new StockReportExport($warehouseId, $startDate, $endDate), $filename);
         }
 
-        // TODO: Implement PDF export
-        return response()->json(['message' => 'PDF export not yet implemented']);
+        if ($format === 'pdf') {
+            $stockReport = $this->getStockReport($warehouseId, $startDate, $endDate);
+            $warehouse = $warehouseId ? Warehouse::find($warehouseId) : null;
+
+            $filename = 'stock_report_'.str_replace('-', '_', $startDate).'_to_'.str_replace('-', '_', $endDate).'.pdf';
+
+            return Pdf::view('reports.stock', compact('stockReport', 'warehouse', 'warehouseId'))
+                ->format('a4')
+                ->download($filename);
+        }
+
+        return response()->json(['message' => 'Unsupported format']);
     }
 
     /**
@@ -277,12 +288,22 @@ class ReportService
     public function exportTransactionReport(string $type, ?int $warehouseId, string $startDate, string $endDate, string $format)
     {
         if ($format === 'excel') {
-            $filename = 'transaction_report_' . $type . '_' . str_replace('-', '_', $startDate) . '_to_' . str_replace('-', '_', $endDate) . '.xlsx';
+            $filename = 'transaction_report_'.$type.'_'.str_replace('-', '_', $startDate).'_to_'.str_replace('-', '_', $endDate).'.xlsx';
 
             return Excel::download(new TransactionReportExport($type, $warehouseId, $startDate, $endDate), $filename);
         }
 
-        // TODO: Implement PDF export
-        return response()->json(['message' => 'PDF export not yet implemented']);
+        if ($format === 'pdf') {
+            $transactionReport = $this->getTransactionReport($type, $warehouseId, $startDate, $endDate);
+            $warehouse = $warehouseId ? Warehouse::find($warehouseId) : null;
+
+            $filename = 'transaction_report_'.$type.'_'.str_replace('-', '_', $startDate).'_to_'.str_replace('-', '_', $endDate).'.pdf';
+
+            return Pdf::view('reports.transactions', compact('transactionReport', 'warehouse', 'warehouseId', 'type'))
+                ->format('a4')
+                ->download($filename);
+        }
+
+        return response()->json(['message' => 'Unsupported format']);
     }
 }
