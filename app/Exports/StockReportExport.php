@@ -6,8 +6,12 @@ use App\Services\ReportService;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
+use Maatwebsite\Excel\Concerns\WithTitle;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Events\AfterSheet;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 
-class StockReportExport implements FromCollection, WithHeadings, WithMapping
+class StockReportExport implements FromCollection, WithHeadings, WithMapping, WithTitle, WithEvents
 {
     protected $warehouseId;
 
@@ -47,17 +51,17 @@ class StockReportExport implements FromCollection, WithHeadings, WithMapping
     public function headings(): array
     {
         return [
-            'Warehouse',
-            'Product Code',
-            'Product Name',
-            'Unit',
-            'Quantity',
-            'Reserved Qty',
-            'Available Qty',
+            'Gudang',
+            'Kode Produk',
+            'Nama Produk',
+            'Satuan',
+            'Qty',
+            'Qty Dipesan',
+            'Qty Tersedia',
             'Min Stock',
             'Max Stock',
-            'Cost',
-            'Value',
+            'Harga',
+            'Nilai',
             'Status',
         ];
     }
@@ -77,6 +81,42 @@ class StockReportExport implements FromCollection, WithHeadings, WithMapping
             $row['cost'],
             $row['value'],
             $row['status'],
+        ];
+    }
+
+    public function title(): string
+    {
+        return 'Laporan Stok - PT Rizquna Berkah Mandiri';
+    }
+
+    public function registerEvents(): array
+    {
+        return [
+            AfterSheet::class => function(AfterSheet $event) {
+                $sheet = $event->sheet;
+
+                // Add company name at the top
+                $sheet->insertNewRowBefore(1, 2);
+                $sheet->setCellValue('A1', 'PT Rizquna Berkah Mandiri');
+                $sheet->setCellValue('A2', 'Laporan Stok');
+
+                // Merge cells for title
+                $sheet->mergeCells('A1:L1');
+                $sheet->mergeCells('A2:L2');
+
+                // Style the title
+                $sheet->getStyle('A1:L2')->getFont()->setBold(true)->setSize(14);
+                $sheet->getStyle('A1:L2')->getAlignment()->setHorizontal('center');
+
+                // Auto size columns
+                foreach(range('A','L') as $columnID) {
+                    $sheet->getColumnDimension($columnID)->setAutoSize(true);
+                }
+
+                // Style headers
+                $sheet->getStyle('A3:L3')->getFont()->setBold(true);
+                $sheet->getStyle('A3:L3')->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('CCCCCC');
+            },
         ];
     }
 }
