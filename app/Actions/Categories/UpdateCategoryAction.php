@@ -13,6 +13,10 @@ class UpdateCategoryAction
      */
     public function execute(Category $category, array $input): Category
     {
+        if (! $category) {
+            throw new \Exception('Kategori tidak ditemukan');
+        }
+
         $category->update($input);
 
         return $category->fresh();

@@ -35,7 +35,6 @@ class CreateOutboundTransactionAction
     ): OutboundTransaction {
         return DB::transaction(function () use ($customerId, $warehouseId, $productId, $quantity, $unitPrice, $saleDate, $notes, $attachment) {
             try {
-                // Handle file upload if provided
                 $attachmentPath = null;
                 if ($attachment) {
                     $attachmentPath = $this->fileUploadService->upload(
@@ -47,15 +46,36 @@ class CreateOutboundTransactionAction
                             'application/msword',
                             'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
                             'application/vnd.ms-excel',
-                            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                             'image/jpeg',
                             'image/png',
-                            'text/csv',
-                            'text/plain',
                         ],
                         maxSize: 5120, // 5MB
                         prefix: 'outbound'
                     );
+                }
+
+                if ($quantity <= 0) {
+                    throw new Exception('Jumlah harus lebih besar dari 0');
+                }
+
+                if ($unitPrice <= 0) {
+                    throw new Exception('Harga satuan harus lebih besar dari 0');
+                }
+
+                if (! \App\Models\Customer::find($customerId)) {
+                    throw new Exception('Pelanggan tidak ditemukan');
+                }
+
+                if (! \App\Models\Warehouse::find($warehouseId)) {
+                    throw new Exception('Gudang tidak ditemukan');
+                }
+
+                if (! \App\Models\Product::find($productId)) {
+                    throw new Exception('Produk tidak ditemukan');
+                }
+
+                if (! strtotime($saleDate)) {
+                    throw new Exception('Tanggal penjualan tidak valid');
                 }
 
                 // Check stock availability first

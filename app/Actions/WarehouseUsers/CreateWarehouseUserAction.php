@@ -3,6 +3,7 @@
 namespace App\Actions\WarehouseUsers;
 
 use App\Models\WarehouseUser;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class CreateWarehouseUserAction
@@ -12,7 +13,16 @@ class CreateWarehouseUserAction
         return DB::transaction(function () use ($input) {
             $warehouseId = $input['warehouse_id'];
             $userId = $input['user_id'];
-            $assignedBy = $input['assigned_by'] ?? auth()->id();
+
+            if (! \App\Models\Warehouse::find($warehouseId)) {
+                throw new \Exception('Gudang tidak ditemukan');
+            }
+
+            if (! \App\Models\User::find($userId)) {
+                throw new \Exception('Pengguna tidak ditemukan');
+            }
+
+            $assignedBy = $input['assigned_by'] ?? Auth::id();
             $assignedAt = $input['assigned_at'] ?? now();
             $isPrimary = $input['is_primary'] ?? true;
 

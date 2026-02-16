@@ -15,12 +15,10 @@ class DeleteCategoryAction
     public function execute(Category $category): bool
     {
         return DB::transaction(function () use ($category) {
-            // Lock for update to prevent race conditions
             $category = Category::where('id', $category->id)->lockForUpdate()->firstOrFail();
 
-            // Check if category has products (prevent delete if foreign key would fail)
             if ($category->products()->exists()) {
-                throw new \Exception('Cannot delete category with existing products. Please reassign or delete products first.');
+                throw new \Exception('Tidak dapat menghapus kategori yang memiliki produk. Harap pindahkan atau hapus produk terlebih dahulu.');
             }
 
             return $category->delete();

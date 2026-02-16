@@ -13,6 +13,11 @@ class UpdateCustomerAction
      */
     public function execute(Customer $customer, array $input): Customer
     {
+        // Validasi
+        if (! $customer) {
+            throw new \Exception('Pelanggan tidak ditemukan');
+        }
+
         $customer->update([
             'name' => $input['name'],
             'contact_person' => $input['contact_person'],

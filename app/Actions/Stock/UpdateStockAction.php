@@ -26,6 +26,14 @@ class UpdateStockAction
         ?string $notes = null,
     ): Stock {
         return DB::transaction(function () use ($warehouseId, $productId, $quantity, $type, $referenceId, $referenceCode, $notes) {
+            if (! \App\Models\Warehouse::find($warehouseId)) {
+                throw new \Exception('Gudang tidak ditemukan');
+            }
+
+            if (! \App\Models\Product::find($productId)) {
+                throw new \Exception('Produk tidak ditemukan');
+            }
+
             $stock = $this->stock->firstOrCreate(
                 [
                     'warehouse_id' => $warehouseId,
@@ -42,7 +50,6 @@ class UpdateStockAction
             $previousQty = $stock->quantity;
             $newQty = $previousQty + $quantity;
 
-            // Validate negative stock, except for adjustments
             if ($newQty < 0 && $type !== 'adjustment') {
                 throw new \Exception('Stok tidak boleh negatif. Stok saat ini: '.(string) $previousQty.', perubahan: '.(string) $quantity);
             }

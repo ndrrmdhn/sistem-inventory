@@ -17,10 +17,12 @@ class BulkDeleteCustomersAction
     public function execute(array $ids): int
     {
         return DB::transaction(function () use ($ids) {
-            // Lock for update to prevent race conditions
+            if (empty($ids)) {
+                throw new \Exception('Tidak ada ID pelanggan yang dipilih untuk dihapus');
+            }
+
             $customers = Customer::whereIn('id', $ids)->lockForUpdate()->get();
 
-            // Soft delete - preserves audit trail
             return Customer::whereIn('id', $ids)->delete();
         });
     }

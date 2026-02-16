@@ -84,22 +84,23 @@ export function CustomerFormModal({ open, customer, onClose }: CustomerFormModal
                         description={isEditing ? 'Perbarui informasi customer' : 'Tambahkan customer baru ke inventaris Anda'}
                     />
                     <div className="space-y-6 py-4">
-                        {/* Row 1: Code & Name */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {isEditing && (
-                                <div className="space-y-2">
-                                    <Label htmlFor="customer-code">
-                                        Kode Customer
-                                    </Label>
-                                    <Input
-                                        id="customer-code"
-                                        value={form.data.code}
-                                        disabled
-                                        className="font-mono bg-muted"
-                                    />
-                                </div>
-                            )}
+                        {/* Row 1: Code (Edit only) */}
+                        {isEditing && (
+                            <div className="space-y-2">
+                                <Label htmlFor="customer-code">
+                                    Kode Customer
+                                </Label>
+                                <Input
+                                    id="customer-code"
+                                    value={form.data.code}
+                                    disabled
+                                    className="font-mono bg-muted"
+                                />
+                            </div>
+                        )}
 
+                        {/* Row 2: Name & Contact Person */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <Label htmlFor="customer-name">
                                     Nama Customer <span className="text-destructive">*</span>
@@ -114,10 +115,7 @@ export function CustomerFormModal({ open, customer, onClose }: CustomerFormModal
                                 />
                                 <InputError message={form.errors.name} />
                             </div>
-                        </div>
 
-                        {/* Row 2: Contact Person & Phone */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <Label htmlFor="customer-contact-person">
                                     Kontak Person
@@ -131,7 +129,10 @@ export function CustomerFormModal({ open, customer, onClose }: CustomerFormModal
                                 />
                                 <InputError message={form.errors.contact_person} />
                             </div>
+                        </div>
 
+                        {/* Row 3: Phone & Email */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <Label htmlFor="customer-phone">
                                     Nomor Telepon
@@ -145,22 +146,21 @@ export function CustomerFormModal({ open, customer, onClose }: CustomerFormModal
                                 />
                                 <InputError message={form.errors.phone} />
                             </div>
-                        </div>
 
-                        {/* Row 3: Email */}
-                        <div className="space-y-2">
-                            <Label htmlFor="customer-email">
-                                Email
-                            </Label>
-                            <Input
-                                id="customer-email"
-                                type="email"
-                                value={form.data.email}
-                                onChange={(e) => form.setData('email', e.target.value)}
-                                placeholder="Contoh: contact@tokomakmur.com"
-                                maxLength={100}
-                            />
-                            <InputError message={form.errors.email} />
+                            <div className="space-y-2">
+                                <Label htmlFor="customer-email">
+                                    Email
+                                </Label>
+                                <Input
+                                    id="customer-email"
+                                    type="email"
+                                    value={form.data.email}
+                                    onChange={(e) => form.setData('email', e.target.value)}
+                                    placeholder="Contoh: contact@tokomakmur.com"
+                                    maxLength={100}
+                                />
+                                <InputError message={form.errors.email} />
+                            </div>
                         </div>
 
                         {/* Row 4: Address */}

@@ -59,7 +59,7 @@ export function ProductToolbar({
                 <div className="relative flex-1">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
-                        placeholder="Cari berdasarkan nama, merek, SKU, atau kategori"
+                        placeholder="Cari berdasarkan nama produk"
                         value={searchValue}
                         onChange={(e) => onSearchChange(e.target.value)}
                         className="pl-9"

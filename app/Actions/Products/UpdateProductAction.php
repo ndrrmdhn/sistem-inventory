@@ -3,14 +3,9 @@
 namespace App\Actions\Products;
 
 use App\Models\Product;
-use App\Services\FileUploadService;
 
 class UpdateProductAction
 {
-    public function __construct(
-        private readonly FileUploadService $fileUploadService,
-    ) {}
-
     /**
      * Update an existing product.
      *
@@ -18,12 +13,18 @@ class UpdateProductAction
      */
     public function execute(Product $product, array $input): Product
     {
-        // Gunakan collect untuk mempermudah pembersihan data opsional
+        if (! $product) {
+            throw new \Exception('Produk tidak ditemukan');
+        }
+
+        if (isset($input['category_id']) && ! \App\Models\Category::find($input['category_id'])) {
+            throw new \Exception('Kategori tidak ditemukan');
+        }
+
         $data = collect($input)->only([
             'category_id', 'name', 'unit', 'min_stock',
-            'max_stock', 'price', 'cost', 'description', 'is_active'
+            'max_stock', 'price', 'cost', 'description', 'is_active',
         ])->filter(function ($value) {
-            // Hanya update jika nilainya tidak kosong (tapi 0 tetap boleh)
             return $value !== '' && $value !== null;
         })->toArray();
 

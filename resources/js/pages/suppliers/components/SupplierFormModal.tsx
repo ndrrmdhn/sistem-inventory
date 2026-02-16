@@ -86,22 +86,23 @@ export function SupplierFormModal({ open, supplier, onClose }: SupplierFormModal
                         description={isEditing ? 'Perbarui informasi supplier' : 'Tambahkan supplier baru ke inventaris Anda'}
                     />
                     <div className="space-y-6 py-4">
-                        {/* Row 1: Code & Name */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {isEditing && (
-                                <div className="space-y-2">
-                                    <Label htmlFor="supplier-code">
-                                        Kode Supplier
-                                    </Label>
-                                    <Input
-                                        id="supplier-code"
-                                        value={form.data.code}
-                                        disabled
-                                        className="font-mono bg-muted"
-                                    />
-                                </div>
-                            )}
+                        {/* Row 1: Code (Edit only) */}
+                        {isEditing && (
+                            <div className="space-y-2">
+                                <Label htmlFor="supplier-code">
+                                    Kode Supplier
+                                </Label>
+                                <Input
+                                    id="supplier-code"
+                                    value={form.data.code}
+                                    disabled
+                                    className="font-mono bg-muted"
+                                />
+                            </div>
+                        )}
 
+                        {/* Row 2: Name & Contact Person */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <Label htmlFor="supplier-name">
                                     Nama Supplier <span className="text-destructive">*</span>
@@ -116,10 +117,7 @@ export function SupplierFormModal({ open, supplier, onClose }: SupplierFormModal
                                 />
                                 <InputError message={form.errors.name} />
                             </div>
-                        </div>
 
-                        {/* Row 2: Contact Person & Phone */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <Label htmlFor="supplier-contact-person">
                                     Kontak Person <span className="text-destructive">*</span>
@@ -134,10 +132,13 @@ export function SupplierFormModal({ open, supplier, onClose }: SupplierFormModal
                                 />
                                 <InputError message={form.errors.contact_person} />
                             </div>
+                        </div>
 
+                        {/* Row 3: Phone & Email */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <Label htmlFor="supplier-phone">
-                                    Nomor Telepon <span className="text-destructive">*</span>
+                                    Nomor Telepon
                                 </Label>
                                 <Input
                                     id="supplier-phone"
@@ -145,18 +146,14 @@ export function SupplierFormModal({ open, supplier, onClose }: SupplierFormModal
                                     value={form.data.phone}
                                     onChange={(e) => form.setData('phone', e.target.value)}
                                     placeholder="Contoh: +62 812-3456-7890"
-                                    required
                                     maxLength={20}
                                 />
                                 <InputError message={form.errors.phone} />
                             </div>
-                        </div>
 
-                        {/* Row 3: Email & Tax ID */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <Label htmlFor="supplier-email">
-                                    Email <span className="text-destructive">*</span>
+                                    Email
                                 </Label>
                                 <Input
                                     id="supplier-email"
@@ -164,30 +161,29 @@ export function SupplierFormModal({ open, supplier, onClose }: SupplierFormModal
                                     value={form.data.email}
                                     onChange={(e) => form.setData('email', e.target.value)}
                                     placeholder="Contoh: contact@supplier.com"
-                                    required
                                     maxLength={255}
                                 />
                                 <InputError message={form.errors.email} />
                             </div>
-
-                            <div className="space-y-2">
-                                <Label htmlFor="supplier-tax-id">
-                                    NPWP <span className="text-destructive">*</span>
-                                </Label>
-                                <Input
-                                    id="supplier-tax-id"
-                                    value={form.data.tax_id}
-                                    onChange={(e) => form.setData('tax_id', e.target.value.toUpperCase())}
-                                    placeholder="Contoh: NPWP-1234567890123456"
-                                    required
-                                    maxLength={50}
-                                    className="font-mono"
-                                />
-                                <InputError message={form.errors.tax_id} />
-                            </div>
                         </div>
 
-                        {/* Row 4: Address */}
+                        {/* Row 4: Tax ID */}
+                        <div className="space-y-2">
+                            <Label htmlFor="supplier-tax-id">
+                                NPWP
+                            </Label>
+                            <Input
+                                id="supplier-tax-id"
+                                value={form.data.tax_id}
+                                onChange={(e) => form.setData('tax_id', e.target.value.toUpperCase())}
+                                placeholder="Contoh: NPWP-1234567890123456"
+                                maxLength={50}
+                                className="font-mono"
+                            />
+                            <InputError message={form.errors.tax_id} />
+                        </div>
+
+                        {/* Row 5: Address */}
                         <div className="space-y-2">
                             <Label htmlFor="supplier-address">
                                 Alamat <span className="text-destructive">*</span>
@@ -204,7 +200,7 @@ export function SupplierFormModal({ open, supplier, onClose }: SupplierFormModal
                             <InputError message={form.errors.address} />
                         </div>
 
-                        {/* Row 5: Status */}
+                        {/* Row 6: Status */}
                         <div className="flex items-center space-x-2">
                             <Checkbox
                                 id="supplier-is-active"

@@ -29,7 +29,26 @@ class CreateMutationAction
     ): StockMutation {
         return DB::transaction(function () use ($fromWarehouseId, $toWarehouseId, $productId, $quantity, $notes) {
             try {
-                // Check stock availability in source warehouse
+                if ($quantity <= 0) {
+                    throw new Exception('Jumlah harus lebih besar dari 0');
+                }
+
+                if ($fromWarehouseId === $toWarehouseId) {
+                    throw new Exception('Gudang asal dan tujuan tidak boleh sama');
+                }
+
+                if (! \App\Models\Warehouse::find($fromWarehouseId)) {
+                    throw new Exception('Gudang asal tidak ditemukan');
+                }
+
+                if (! \App\Models\Warehouse::find($toWarehouseId)) {
+                    throw new Exception('Gudang tujuan tidak ditemukan');
+                }
+
+                if (! \App\Models\Product::find($productId)) {
+                    throw new Exception('Produk tidak ditemukan');
+                }
+
                 $stockInfo = $this->checkStockAvailabilityAction->getStockInfo($fromWarehouseId, $productId);
 
                 if (! $stockInfo['is_available'] || $stockInfo['available'] < $quantity) {
@@ -53,9 +72,6 @@ class CreateMutationAction
                     'notes' => $notes,
                     'created_by' => Auth::id(),
                 ]);
-
-                // Note: Stock reduction will happen when mutation is received/approved
-                // This prevents stock from being reduced before approval
 
                 return $mutation->load(['fromWarehouse', 'toWarehouse', 'product', 'creator']);
 

@@ -17,18 +17,20 @@ class BulkDeleteCategoriesAction
     public function execute(array $ids): int
     {
         return DB::transaction(function () use ($ids) {
-            // Lock for update to prevent race conditions
+            if (empty($ids)) {
+                throw new \Exception('Tidak ada ID kategori yang dipilih untuk dihapus');
+            }
+
             $categories = Category::whereIn('id', $ids)->lockForUpdate()->get();
 
-            // Get categories that have products
             $categoriesWithProducts = $categories->filter(fn ($cat) => $cat->products()->exists())
                 ->pluck('name')
                 ->toArray();
 
             if (! empty($categoriesWithProducts)) {
                 throw new \Exception(
-                    'Cannot delete categories with products: '.implode(', ', $categoriesWithProducts).
-                    '. Please reassign or delete products first.'
+                    'Tidak dapat menghapus kategori yang memiliki produk: '.implode(', ', $categoriesWithProducts).
+                    '. Harap pindahkan atau hapus produk terlebih dahulu.'
                 );
             }
 

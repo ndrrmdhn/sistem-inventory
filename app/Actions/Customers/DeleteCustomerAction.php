@@ -15,10 +15,11 @@ class DeleteCustomerAction
     public function execute(Customer $customer): void
     {
         DB::transaction(function () use ($customer) {
-            // Lock for update to prevent race conditions
-            $customer = Customer::where('id', $customer->id)->lockForUpdate()->firstOrFail();
+            if (! $customer) {
+                throw new \Exception('Pelanggan tidak ditemukan');
+            }
 
-            // Soft delete - preserves audit trail
+            $customer = Customer::where('id', $customer->id)->lockForUpdate()->firstOrFail();
             $customer->delete();
         });
     }

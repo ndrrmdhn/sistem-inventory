@@ -20,10 +20,12 @@ class DeleteProductAction
     public function execute(Product $product): void
     {
         DB::transaction(function () use ($product) {
-            // Lock for update to prevent race conditions
+            if (! $product) {
+                throw new \Exception('Produk tidak ditemukan');
+            }
+
             $product = Product::where('id', $product->getKey())->lockForUpdate()->firstOrFail();
 
-            // Soft delete - preserves audit trail for stock_logs and stock_transfers
             $product->delete();
         });
     }

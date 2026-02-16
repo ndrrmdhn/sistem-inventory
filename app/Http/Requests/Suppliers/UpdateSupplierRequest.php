@@ -21,10 +21,10 @@ class UpdateSupplierRequest extends FormRequest
             // Bersihkan input dari potensi XSS
             'name' => strip_tags(trim($this->name)),
             'contact_person' => strip_tags(trim($this->contact_person)),
-            'phone' => trim($this->phone),
-            'email' => strtolower(trim($this->email)),
+            'phone' => $this->phone ? trim($this->phone) : null,
+            'email' => $this->email ? strtolower(trim($this->email)) : null,
             'address' => strip_tags(trim($this->address)),
-            'tax_id' => strtoupper(trim($this->tax_id)),
+            'tax_id' => $this->tax_id ? strtoupper(trim($this->tax_id)) : null,
         ]);
     }
 
@@ -49,14 +49,14 @@ class UpdateSupplierRequest extends FormRequest
             ],
             'phone' => [
                 'sometimes',
-                'required',
+                'nullable',
                 'string',
                 'max:20',
                 'regex:/^[0-9\-\+\(\)\s]+$/',
             ],
             'email' => [
                 'sometimes',
-                'required',
+                'nullable',
                 'email:rfc,dns',
                 'max:255',
                 Rule::unique('suppliers', 'email')->ignore($supplierId),
@@ -69,7 +69,7 @@ class UpdateSupplierRequest extends FormRequest
             ],
             'tax_id' => [
                 'sometimes',
-                'required',
+                'nullable',
                 'string',
                 'max:50',
                 Rule::unique('suppliers', 'tax_id')->ignore($supplierId),
@@ -95,18 +95,15 @@ class UpdateSupplierRequest extends FormRequest
             'contact_person.string' => 'Nama kontak person harus berupa teks.',
             'contact_person.max' => 'Nama kontak person tidak boleh lebih dari 255 karakter.',
             'contact_person.regex' => 'Nama kontak person hanya boleh mengandung huruf, spasi, titik, dan apostrof.',
-            'phone.required' => 'Nomor telepon wajib diisi.',
             'phone.string' => 'Nomor telepon harus berupa teks.',
             'phone.max' => 'Nomor telepon tidak boleh lebih dari 20 karakter.',
             'phone.regex' => 'Format nomor telepon tidak valid.',
-            'email.required' => 'Email wajib diisi.',
             'email.email' => 'Format email tidak valid.',
             'email.max' => 'Email tidak boleh lebih dari 255 karakter.',
             'email.unique' => 'Email sudah digunakan.',
             'address.required' => 'Alamat wajib diisi.',
             'address.string' => 'Alamat harus berupa teks.',
             'address.max' => 'Alamat tidak boleh lebih dari 1000 karakter.',
-            'tax_id.required' => 'NPWP wajib diisi.',
             'tax_id.string' => 'NPWP harus berupa teks.',
             'tax_id.max' => 'NPWP tidak boleh lebih dari 50 karakter.',
             'tax_id.unique' => 'NPWP sudah digunakan.',

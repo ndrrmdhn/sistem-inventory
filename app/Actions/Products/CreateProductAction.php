@@ -20,10 +20,13 @@ class CreateProductAction
     public function execute(array $input): Product
     {
         return DB::transaction(function () use ($input) {
-            // Generate unique product code
+
+            if (! \App\Models\Category::find($input['category_id'])) {
+                throw new \Exception('Kategori tidak ditemukan');
+            }
+
             $code = $this->generateProductCode();
 
-            // Create product
             $product = Product::create([
                 'code' => $code,
                 'category_id' => $input['category_id'],

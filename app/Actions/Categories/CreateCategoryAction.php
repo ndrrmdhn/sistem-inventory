@@ -13,6 +13,7 @@ class CreateCategoryAction
      */
     public function execute(array $input): Category
     {
+
         return Category::create($input);
     }
 }

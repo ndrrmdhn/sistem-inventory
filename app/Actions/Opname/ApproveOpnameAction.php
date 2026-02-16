@@ -20,7 +20,11 @@ class ApproveOpnameAction
         return DB::transaction(function () use ($opnameId) {
             $opname = Opname::findOrFail($opnameId);
 
-            // Check if already has stock adjustment (simple check)
+            // Validasi
+            if ($opname->status !== 'pending') {
+                throw new Exception('Opname hanya bisa diapprove jika status pending.');
+            }
+
             $existingAdjustment = $opname->stockHistories()
                 ->where('reference_type', 'adjustment')
                 ->exists();
@@ -29,7 +33,6 @@ class ApproveOpnameAction
                 throw new Exception('Opname sudah diapprove sebelumnya.');
             }
 
-            // Update stock if there's difference
             if ($opname->difference_type !== 'sama') {
                 $adjustmentQty = $opname->difference_type === 'lebih'
                     ? $opname->difference_qty
@@ -46,7 +49,6 @@ class ApproveOpnameAction
                 );
             }
 
-            // Update status to approved
             $opname->update(['status' => 'approved']);
 
             return $opname->load(['warehouse', 'product', 'creator', 'stockHistories']);

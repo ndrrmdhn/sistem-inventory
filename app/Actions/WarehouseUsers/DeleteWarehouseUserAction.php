@@ -11,6 +11,10 @@ class DeleteWarehouseUserAction
      */
     public function execute(WarehouseUser $warehouseUser): void
     {
+        if (! $warehouseUser) {
+            throw new \Exception('Warehouse user tidak ditemukan');
+        }
+
         $warehouseUser->update(['end_date' => now()->format('Y-m-d')]);
 
         $warehouseUser->delete();

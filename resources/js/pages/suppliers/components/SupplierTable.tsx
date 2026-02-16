@@ -94,10 +94,10 @@ export function SupplierTable({
                                 </div>
                             </TableCell>
                             <TableCell className="text-muted-foreground">
-                                {supplier.phone}
+                                {supplier.phone || '-'}
                             </TableCell>
                             <TableCell className="text-muted-foreground">
-                                {supplier.email}
+                                {supplier.email || '-'}
                             </TableCell>
                             <TableCell>
                                 <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${

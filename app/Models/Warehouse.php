@@ -21,12 +21,7 @@ class Warehouse extends Model
     public function scopeSearch($query, ?string $search): void
     {
         if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('code', 'like', "%{$search}%")
-                    ->orWhere('name', 'like', "%{$search}%")
-                    ->orWhere('address', 'like', "%{$search}%")
-                    ->orWhere('phone', 'like', "%{$search}%");
-            });
+            $query->where('name', 'like', "%{$search}%");
         }
     }
 
@@ -50,6 +45,4 @@ class Warehouse extends Model
     {
         $query->where('is_active', true);
     }
-
-
 }

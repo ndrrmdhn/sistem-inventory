@@ -28,6 +28,30 @@ class CreateInboundTransactionAction
     ): InboundTransaction {
         return DB::transaction(function () use ($supplierId, $warehouseId, $productId, $quantity, $unitPrice, $receivedDate, $notes) {
             try {
+                if ($quantity <= 0) {
+                    throw new Exception('Jumlah harus lebih besar dari 0');
+                }
+
+                if ($unitPrice <= 0) {
+                    throw new Exception('Harga satuan harus lebih besar dari 0');
+                }
+
+                if (! \App\Models\Supplier::find($supplierId)) {
+                    throw new Exception('Supplier tidak ditemukan');
+                }
+
+                if (! \App\Models\Warehouse::find($warehouseId)) {
+                    throw new Exception('Gudang tidak ditemukan');
+                }
+
+                if (! \App\Models\Product::find($productId)) {
+                    throw new Exception('Produk tidak ditemukan');
+                }
+
+                if (! strtotime($receivedDate)) {
+                    throw new Exception('Tanggal diterima tidak valid');
+                }
+
                 $code = $this->generateTransactionCode();
 
                 $transaction = $this->inboundTransaction->create([
@@ -44,7 +68,6 @@ class CreateInboundTransactionAction
 
                 $transaction->refresh();
 
-                // Update stock with positive quantity
                 $this->updateStockAction->execute(
                     warehouseId: $warehouseId,
                     productId: $productId,

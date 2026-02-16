@@ -15,10 +15,8 @@ class CreateSupplierAction
     public function execute(array $input): Supplier
     {
         return DB::transaction(function () use ($input) {
-            // Generate unique supplier code if not provided
             $code = $input['code'] ?? $this->generateSupplierCode();
 
-            // Create supplier
             $supplier = Supplier::create([
                 'code' => $code,
                 'name' => $input['name'],
@@ -40,7 +38,7 @@ class CreateSupplierAction
     private function generateSupplierCode(): string
     {
         do {
-            $code = 'SUP-' . str_pad(mt_rand(1, 999999), 6, '0', STR_PAD_LEFT);
+            $code = 'SUP-'.str_pad(mt_rand(1, 999999), 6, '0', STR_PAD_LEFT);
         } while (Supplier::where('code', $code)->exists());
 
         return $code;

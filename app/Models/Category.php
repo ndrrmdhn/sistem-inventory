@@ -26,10 +26,7 @@ class Category extends Model
     public function scopeSearch($query, ?string $search): void
     {
         if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('slug', 'like', "%{$search}%");
-            });
+            $query->where('name', 'like', "%{$search}%");
         }
     }
 

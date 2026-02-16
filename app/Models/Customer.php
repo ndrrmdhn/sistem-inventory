@@ -22,13 +22,7 @@ class Customer extends Model
     public function scopeSearch($query, ?string $search): void
     {
         if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('code', 'like', "%{$search}%")
-                    ->orWhere('contact_person', 'like', "%{$search}%")
-                    ->orWhere('phone', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%");
-            });
+            $query->where('name', 'like', "%{$search}%");
         }
     }
 

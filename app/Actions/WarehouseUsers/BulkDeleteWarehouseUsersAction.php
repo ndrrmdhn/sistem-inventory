@@ -13,6 +13,10 @@ class BulkDeleteWarehouseUsersAction
      */
     public function execute(array $ids): int
     {
+        if (empty($ids)) {
+            throw new \Exception('Tidak ada ID yang dipilih untuk dihapus');
+        }
+
         return WarehouseUser::whereIn('id', $ids)->delete();
     }
 }
