@@ -23,9 +23,10 @@ class ProductController extends Controller
         $this->authorize('viewAny', Product::class);
 
         $products = Product::query()
-            ->active()
             ->with(['category:id,name'])
             ->search($request->search)
+            ->when($request->status === 'active', fn ($q) => $q->where('is_active', true))
+            ->when($request->status === 'inactive', fn ($q) => $q->where('is_active', false))
             ->latest()
             ->paginate(10)
             ->withQueryString();

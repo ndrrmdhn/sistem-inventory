@@ -15,29 +15,29 @@ class WarehouseSeeder extends Seeder
         // Create specific warehouses
         Warehouse::create([
             'code' => 'WHS-001',
-            'name' => 'Gudang Pusat Jakarta',
-            'address' => 'Jl. Sudirman No. 123, Jakarta Pusat, DKI Jakarta 10220',
-            'phone' => '021-12345678',
+            'name' => 'Gudang Pemalang',
+            'address' => 'Jl. Raya Petarukan, Kabupaten Pemalang, Jawa Tengah 52362',
+            'phone' => '0811-234-5678',
             'is_active' => true,
         ]);
 
         Warehouse::create([
             'code' => 'WHS-002',
-            'name' => 'Gudang Cabang Bandung',
-            'address' => 'Jl. Asia Afrika No. 456, Bandung, Jawa Barat 40111',
-            'phone' => '022-87654321',
+            'name' => 'Gudang Pekalongan',
+            'address' => 'Jl. Jenderal Sudirman , Kota Pekalongan, Jawa Tengah 51111',
+            'phone' => '0812-345-6789',
             'is_active' => true,
         ]);
 
         Warehouse::create([
             'code' => 'WHS-003',
-            'name' => 'Gudang Cabang Surabaya',
-            'address' => 'Jl. Tunjungan No. 789, Surabaya, Jawa Timur 60275',
-            'phone' => '031-11223344',
+            'name' => 'Gudang Tegal',
+            'address' => 'Jl. Perintis Kemerdekaan, Kota Tegal, Jawa Tengah 52122',
+            'phone' => '0813-456-7890',
             'is_active' => true,
         ]);
 
         // Create additional random warehouses
-        Warehouse::factory(2)->create();
+        // Warehouse::factory(2)->create();
     }
 }

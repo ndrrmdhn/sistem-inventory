@@ -15,8 +15,9 @@ class DatabaseSeeder extends Seeder
         $this->call([
             UserSeeder::class,           // 1. Create users & roles first
             CategorySeeder::class,       // 2. Create categories
-            WarehouseSeeder::class,      // 3. Create warehouses
-            ProductSeeder::class,        // 4. Create products (needs categories)
+            SupplierSeeder::class,       // 3. Create suppliers
+            WarehouseSeeder::class,      // 4. Create warehouses
+            ProductSeeder::class,        // 5. Create products (needs categories)
             WarehouseUserSeeder::class,  // 6. Assign users to warehouses
         ]);
     }

@@ -8,9 +8,16 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from '@/components/ui/tooltip';
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
 import { exportMethod } from '@/routes/reports/stock';
+import { type BreadcrumbItem } from '@/types';
+
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
@@ -127,8 +134,34 @@ export default function StockReport({ stockReport, warehouses, filters }: Props)
                 {data.map((item, index) => (
                     <TableRow key={index}>
                         <TableCell>{item.warehouse_name}</TableCell>
-                        <TableCell>{item.product_code}</TableCell>
-                        <TableCell>{item.product_name}</TableCell>
+                        <TableCell className="max-w-xs">
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <span className="block truncate font-medium cursor-pointer">
+                                            {item.product_code}
+                                        </span>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        {item.product_code}
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
+                        </TableCell>
+                        <TableCell className="max-w-xs">
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <span className="block truncate cursor-pointer">
+                                            {item.product_name}
+                                        </span>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        {item.product_name}
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
+                        </TableCell>
                         <TableCell>{item.unit}</TableCell>
                         <TableCell className="text-right">{item.quantity}</TableCell>
                         <TableCell className="text-right">{item.reserved_qty}</TableCell>
@@ -233,7 +266,20 @@ export default function StockReport({ stockReport, warehouses, filters }: Props)
                             <CardTitle className="text-sm font-medium">Total Value</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{formatCurrency(stockReport.summary.total_value)}</div>
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <div
+                                            className="text-lg sm:text-xl md:text-2xl font-bold truncate cursor-pointer w-full">
+                                            {formatCurrency(stockReport.summary.total_value)}
+                                        </div>
+                                    </TooltipTrigger>
+
+                                    <TooltipContent side="top" className="font-semibold">
+                                        {formatCurrency(stockReport.summary.total_value)}
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
                         </CardContent>
                     </Card>
                     <Card>

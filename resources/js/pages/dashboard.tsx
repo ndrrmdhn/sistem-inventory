@@ -1,3 +1,4 @@
+// 1. External libraries
 import { Head, Link } from '@inertiajs/react';
 import {
     Package,
@@ -10,16 +11,31 @@ import {
     ArrowRightLeft,
     BarChart3,
     FileText,
-    Bell
+    Bell,
 } from 'lucide-react';
+
+// 2. UI Components (shadcn)
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from '@/components/ui/tooltip';
+
+// 3. Layouts
 import AppLayout from '@/layouts/app-layout';
+
+// 4. Page Components
 import { EmployeesList } from '@/pages/dashboard/EmployeesList';
 import { ProductsList } from '@/pages/dashboard/ProductsList';
+
+// 5. Routes & Types
 import { dashboard } from '@/routes';
 import type { BreadcrumbItem } from '@/types';
+
 
 interface DashboardProps {
     products: Array<{
@@ -173,7 +189,20 @@ export default function Dashboard({
                             <TrendingUp className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{formatCurrency(stockSummary.total_stock_value)}</div>
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <div className="text-xl md:text-2xl font-bold truncate cursor-pointer max-w-full">
+                                            {formatCurrency(stockSummary.total_stock_value)}
+                                        </div>
+                                    </TooltipTrigger>
+                                    <TooltipContent side="top">
+                                        <p className="font-semibold">
+                                            {formatCurrency(stockSummary.total_stock_value)}
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
                         </CardContent>
                     </Card>
                     <Card>

@@ -8,6 +8,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from '@/components/ui/tooltip';
 import AppLayout from '@/layouts/app-layout';
 import { exportMethod } from '@/routes/reports/transactions';
 import { type BreadcrumbItem } from '@/types';
@@ -312,18 +318,55 @@ export default function TransactionReport({ transactionReport, warehouses, filte
                                                 {getTypeBadge(transaction.type)}
                                             </div>
                                         </TableCell>
-                                        <TableCell className="font-mono">{transaction.code}</TableCell>
-                                        <TableCell>{format(new Date(transaction.date), 'dd/MM/yyyy', { locale: id })}</TableCell>
-                                        <TableCell>{transaction.product}</TableCell>
-                                        <TableCell>
-                                            {transaction.type === 'mutation' ? (
-                                                <div className="text-sm">
-                                                    <div>{transaction.from_warehouse} → {transaction.to_warehouse}</div>
-                                                </div>
-                                            ) : (
-                                                transaction.warehouse
-                                            )}
+                                        <TableCell className="max-w-xs">
+                                            <TooltipProvider>
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <span className="font-mono block truncate cursor-pointer">
+                                                            {transaction.code}
+                                                        </span>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent>
+                                                        {transaction.code}
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            </TooltipProvider>
                                         </TableCell>
+                                        <TableCell>{format(new Date(transaction.date), 'dd/MM/yyyy', { locale: id })}</TableCell>
+                                        <TableCell className="max-w-xs">
+                                            <TooltipProvider>
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <span className="block truncate cursor-pointer">
+                                                            {transaction.product}
+                                                        </span>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent>
+                                                        {transaction.product}
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            </TooltipProvider>
+                                        </TableCell>
+                                        <TableCell className="max-w-xs">
+                                            <TooltipProvider>
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <div className="text-sm truncate block cursor-pointer">
+                                                            {transaction.type === 'mutation'
+                                                                ? `${transaction.from_warehouse} → ${transaction.to_warehouse}`
+                                                                : transaction.warehouse}
+                                                        </div>
+                                                    </TooltipTrigger>
+
+                                                    <TooltipContent side="top">
+                                                        {transaction.type === 'mutation'
+                                                            ? `${transaction.from_warehouse} → ${transaction.to_warehouse}`
+                                                            : transaction.warehouse}
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            </TooltipProvider>
+                                        </TableCell>
+
                                         <TableCell className="text-right">
                                             {transaction.type === 'mutation' && transaction.received_qty !== undefined ? (
                                                 <div className="text-sm">

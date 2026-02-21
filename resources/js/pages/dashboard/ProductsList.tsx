@@ -1,6 +1,8 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Package } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { Package, Users } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@/components/ui/tooltip';
+import { formatRupiah } from '@/utils/format';
 
 interface Product {
     id: number;
@@ -50,15 +52,28 @@ export function ProductsList({ products }: ProductsListProps) {
                                                 {product.code}
                                             </Badge>
                                             <span>•</span>
-                                            <span>{product.category?.name}</span>
+                                            <TooltipProvider>
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <span className="text-xs text-muted-foreground truncate block w-full">
+                                                            {product.category?.name}
+                                                        </span>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent>
+                                                        {product.category?.name}
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            </TooltipProvider>
                                             <span>•</span>
-                                            <span>{product.unit}</span>
+                                            <span className="text-xs text-muted-foreground truncate block w-full">
+                                                {product.unit}
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
                                 <div className="text-right">
                                     <div className="font-medium">
-                                        Rp {product.price?.toLocaleString('id-ID') || '0'}
+                                        {formatRupiah(product.price)}
                                     </div>
                                     <Badge
                                         variant={product.is_active ? "default" : "secondary"}
